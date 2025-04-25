@@ -690,10 +690,21 @@ export default function AthleteInsightsScreen() {
         'power_index'
       ];
       
+      // Log all available stats for debugging
+      console.log("Current stats status:", stats.map(s => ({
+        id: s.id,
+        status: s.status,
+        hasValue: s.value !== null && s.value !== undefined
+      })));
+      
       // Find which required stats are missing
       const missingStats = requiredStats.filter(stat => {
         const statObj = stats.find(s => s.id === stat);
-        return !statObj || statObj.status !== 'available';
+        const isMissing = !statObj || statObj.status !== 'available';
+        if (isMissing) {
+          console.log(`Stat ${stat} is missing or not available. Status: ${statObj?.status}`);
+        }
+        return isMissing;
       });
       
       console.log("Missing stats:", missingStats);
@@ -737,11 +748,37 @@ export default function AthleteInsightsScreen() {
       const athleteStats = await response.json();
       console.log('Stats for recommendations:', athleteStats);
       
-      // Check for empty or null values in athlete stats from backend
+      // Merge in values from the local stats array that might not be in the backend yet
+      for (const stat of stats) {
+        if (stat.status === 'available' && stat.value) {
+          const statId = stat.id;
+          // If the stat isn't in the backend data or has a value of 0/null
+          const backendValue = extractStatValue(statId, athleteStats);
+          if (backendValue === 0 || backendValue === null || backendValue === undefined) {
+            console.log(`Using local value for ${statId} instead of backend value`);
+            
+            // For object values like somatotype, use the entire value
+            if (typeof stat.value === 'object') {
+              athleteStats[statId] = stat.value;
+            } 
+            // For primitive values or extractable values, try to get a numeric value
+            else {
+              const localValue = typeof stat.value === 'number' ? 
+                stat.value : 
+                (typeof stat.value === 'string' ? Number(stat.value) || 1 : 1);
+                
+              athleteStats[statId] = localValue;
+            }
+          }
+        }
+      }
+      
+      // Check for empty or null values in athlete stats from backend (after merging)
       const emptyBackendStats = [];
       
       for (const statId of requiredStats) {
         const statValue = extractStatValue(statId, athleteStats);
+        console.log(`Checking statId: ${statId}, value: ${statValue}`);
         if (statValue === 0 || statValue === null || statValue === undefined) {
           emptyBackendStats.push(statId);
         }
@@ -753,6 +790,8 @@ export default function AthleteInsightsScreen() {
           const definition = getStatDefinition(statId);
           return definition.name;
         });
+        
+        console.log("Empty stats after backend fetch:", emptyBackendStats);
         
         // Construct the message
         let message = 'Cannot generate recommendations. Missing data for: ';
@@ -1322,9 +1361,7 @@ export default function AthleteInsightsScreen() {
               
               <View style={styles.somatotypeFooter}>
                 <Text style={styles.somatotypeFooterText}>
-                  Most people are a combination of these three somatotypes. Your dominant somatotype 
-                  can guide your training approach, but remember that with proper training and nutrition, 
-                  you can excel in any sport regardless of your body type.
+                  Most people have a combination of these three somatotypes. Your dominant somatotype can provide valuable insights into the types of sports that may align best with your body type. Our app helps guide you in selecting the sport that complements your body type, allowing you to make informed decisions about your athletic pursuits.
                 </Text>
               </View>
             </ScrollView>
