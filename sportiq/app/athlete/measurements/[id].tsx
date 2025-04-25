@@ -38,13 +38,13 @@ interface Measurements {
 // Define measurement instruction sources
 const measurementInstructions = {
   uac: require('../../../assets/images/arm.png'),
-  cc: 'https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2023/02/calf-muscle-measurement.png?resize=768%2C432&ssl=1',
-  triceps: 'https://www.researchgate.net/profile/Thomas-Barber-3/publication/9087613/figure/fig2/AS:394662550278146@1471104300584/Measurement-of-skinfold-thickness-at-the-triceps-site-All-skinfold-thicknesses-were.png',
-  subscapular: 'https://www.researchgate.net/profile/Donald-Dengel/publication/348566999/figure/fig6/AS:982778336735233@1611551011143/Subscapular-Skinfold-Thickness-This-Skinfold-is-Measured-on-the-Diagonal-Line-Coming.png',
-  supraspinale: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPRmfLcf-3q-LUv8ov-Vs8JxZ-ahBpd-oxbA&usqp=CAU',
-  medialCalf: 'https://www.researchgate.net/profile/Donald-Dengel/publication/348566999/figure/fig7/AS:982778340929538@1611551011358/Medial-Calf-Skinfold-Thickness-This-Skinfold-is-Measured-on-the-Inside-of-the-Calf-at.png',
-  humerus: 'https://www.researchgate.net/profile/Roel-Vanholder/publication/12770610/figure/fig8/AS:601795231936521@1520492339589/Measurement-of-humerus-breadth-The-distance-across-the-epicondyles-of-the-right-humerus.png',
-  femur: 'https://www.researchgate.net/profile/Roel-Vanholder/publication/12770610/figure/fig9/AS:601795231936520@1520492339568/Measurements-of-femur-breadth-The-distance-across-the-epicondyles-of-the-right-femur-was.png'
+  cc: require('../../../assets/images/calf.png'),
+  tricep: require('../../../assets/images/tricep.jpg'),
+  subscapular: require('../../../assets/images/subscalp.jpg'),
+  supraspinale: require('../../../assets/images/supras.jpg'),
+  medialCalf: require('../../../assets/images/medial.jpg'),
+  humerus: require('../../../assets/images/humerus.jpg'),
+  femur: require('../../../assets/images/femur.jpg'),
 };
 
 // Tab definitions
@@ -275,7 +275,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Calf Circumference (cm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.cc }}
+          source={typeof measurementInstructions.cc === 'string' ? { uri: measurementInstructions.cc } : measurementInstructions.cc}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -301,7 +301,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Triceps Skinfold (mm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.triceps }}
+          source={typeof measurementInstructions.tricep === 'string' ? { uri: measurementInstructions.tricep } : measurementInstructions.tricep}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -321,7 +321,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Subscapular Skinfold (mm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.subscapular }}
+          source={typeof measurementInstructions.subscapular === 'string' ? { uri: measurementInstructions.subscapular } : measurementInstructions.subscapular}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -341,7 +341,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Supraspinale Skinfold (mm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.supraspinale }}
+          source={typeof measurementInstructions.supraspinale === 'string' ? { uri: measurementInstructions.supraspinale } : measurementInstructions.supraspinale}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -361,7 +361,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Medial Calf Skinfold (mm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.medialCalf }}
+          source={typeof measurementInstructions.medialCalf === 'string' ? { uri: measurementInstructions.medialCalf } : measurementInstructions.medialCalf}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -387,7 +387,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Humerus Width (cm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.humerus }}
+          source={typeof measurementInstructions.humerus === 'string' ? { uri: measurementInstructions.humerus } : measurementInstructions.humerus}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -407,7 +407,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Femur Width (cm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.femur }}
+          source={typeof measurementInstructions.femur === 'string' ? { uri: measurementInstructions.femur } : measurementInstructions.femur}
           style={styles.instructionImage}
           resizeMode="contain"
         />
@@ -641,8 +641,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     padding: 12,
     borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#007bff',
   },
   instructionImage: {
     width: '100%',
