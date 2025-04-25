@@ -63,6 +63,10 @@ router.put('/', /*authenticateToken,*/ async (req, res) => {
     }
 });
 
+router.put('/resetCount',/*authenticateToken,*/ async(req,res)=>{
+
+});
+
 // Delete 100m sport record
 router.delete('/:athlete_id', /*authenticateToken,*/ async (req, res) => {
     try {

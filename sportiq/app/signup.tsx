@@ -12,20 +12,12 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSignUp = () => {
-    // TODO: call backend /auth/register endpoint
-    // For now, redirect to login
     router.replace('/login');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header Bar */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Coach Sign Up</Text>
-      </View>
-
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {/* Photo Upload */}
         <View style={styles.photoContainer}>
           <Ionicons name="person-circle-outline" size={100} color="#ccc" />
           <TouchableOpacity style={styles.uploadButton}>
@@ -33,7 +25,6 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Form Inputs */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>NIC Number</Text>
           <View style={styles.inputWrapper}>
@@ -102,11 +93,11 @@ export default function SignUpScreen() {
             />
           </View>
         </View>
-      </ScrollView>
 
-      <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-        <Text style={styles.signUpButtonText}>Sign Up</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
+          <Text style={styles.signUpButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -117,64 +108,75 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    height: 50,
+    height: 60,
     backgroundColor: '#007bff',
     justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#fff',
+    textAlign: 'center',
   },
   content: {
     padding: 20,
+    paddingBottom: 40,
   },
   photoContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   uploadButton: {
     backgroundColor: '#007bff',
-    padding: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderRadius: 5,
+    marginTop: 10,
   },
   uploadButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
   },
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
   label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 6,
+    color: '#333',
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#f9f9f9',
   },
   icon: {
-    marginRight: 10,
+    marginRight: 8,
   },
   input: {
     flex: 1,
+    fontSize: 15,
+    color: '#333',
   },
   signUpButton: {
     backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
+    paddingVertical: 14,
+    borderRadius: 8,
     alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
   },
   signUpButtonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
   },
-}); 
+});

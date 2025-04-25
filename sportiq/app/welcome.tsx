@@ -1,78 +1,46 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function WelcomeScreen() {
-  // Obtain router via hook
   const router = useRouter();
-  // Function to handle the bypass login for development
-  const handleBypassLogin = () => {
-    // Navigate to the main app (Home tab)
-    router.replace('/');
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Sport Icon */}
-        <View style={styles.iconContainer}>
-          <Ionicons name="fitness" size={40} color="white" />
-        </View>
-
-        {/* App Title */}
-        <Text style={styles.title}>Sport Match AI</Text>
         
-        {/* Description */}
-        <Text style={styles.description}>
-          Discover your perfect sport match based on your body type and preferences
-        </Text>
-
-        {/* Image */}
-        <View style={styles.imageContainer}>
+        {/* App Icon */}
+        <View style={styles.iconContainer}>
           <Image 
             source={require('../assets/images/icon.png')} 
-            style={styles.image}
+            style={styles.iconImage}
             resizeMode="contain"
           />
         </View>
 
-        {/* Get Started Button */}
+        {/* App Title */}
+        <Text style={styles.title}>SportiQ</Text>
+
+        {/* Tagline */}
+        <Text style={styles.description}>
+          Discover the Sport Meant for You
+        </Text>
+
+        {/* Illustration */}
+        <View style={styles.imageContainer}>
+          <Image 
+            source={require('../assets/images/landing-icon.jpg')} 
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+        </View>
+
+        {/* CTA Button */}
         <Link href="/login" asChild>
           <TouchableOpacity style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>Get Started</Text>
           </TouchableOpacity>
         </Link>
-
-        {/* Previous Results Button */}
-        <TouchableOpacity style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>View Previous Results</Text>
-        </TouchableOpacity>
-
-        {/* Development Bypass Button */}
-        <TouchableOpacity style={styles.bypassButton} onPress={handleBypassLogin}>
-          <Text style={styles.bypassButtonText}>Bypass Login (Dev)</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <Link href="/(tabs)" asChild>
-          <TouchableOpacity style={styles.navItem}>
-            <Ionicons name="home" size={24} color="#4285F4" />
-            <Text style={styles.navText}>Home</Text>
-          </TouchableOpacity>
-        </Link>
-        
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="person" size={24} color="#777" />
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="settings" size={24} color="#777" />
-          <Text style={styles.navText}>Settings</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -81,93 +49,76 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
   content: {
     flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingHorizontal: 24,
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: '#4285F4',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
+  },
+  iconImage: {
+    width: 60,
+    height: 60,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
+    color: '#333',
     marginBottom: 8,
   },
   description: {
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 32,
+    paddingHorizontal: 10,
   },
   imageContainer: {
     width: '100%',
-    height: 200,
+    height: 220,
     borderRadius: 16,
     overflow: 'hidden',
-    marginBottom: 30,
+    marginBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  image: {
+  heroImage: {
     width: '100%',
     height: '100%',
   },
   primaryButton: {
     backgroundColor: '#4285F4',
-    borderRadius: 8,
+    borderRadius: 10,
     width: '100%',
-    padding: 16,
+    paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 16,
+    elevation: 3,
   },
   primaryButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
-  },
-  secondaryButton: {
-    backgroundColor: '#f1f1f1',
-    borderRadius: 8,
-    width: '100%',
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  secondaryButtonText: {
-    color: '#333',
-    fontWeight: '500',
-    fontSize: 16,
+    fontSize: 18,
   },
   bypassButton: {
-    padding: 10,
-    marginTop: 10,
+    marginTop: 8,
   },
   bypassButtonText: {
-    color: '#888',
+    color: '#999',
     fontSize: 14,
+    textDecorationLine: 'underline',
   },
-  bottomNav: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    paddingVertical: 10,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navText: {
-    marginTop: 4,
-    fontSize: 12,
-    color: '#777',
-  },
-}); 
+});

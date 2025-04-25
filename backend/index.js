@@ -11,6 +11,7 @@ import coachcRUDRouter from './crud-operations/coach-crud.js';
 import measurementscRUDRouter from './crud-operations/measurements-crud.js';
 import athleteStatCRUDRouter from './crud-operations/athlete-stat-crud.js';
 import basicPerformanceCRUDRouter from './crud-operations/basic-performance-crud.js';
+import modelRouter from './crud-operations/model-crud.js';
 
 import dash100Router from './sports/100m.js';
 import dash200Router from './sports/200m.js';
@@ -31,6 +32,8 @@ import nmeRouter from './calculations/neuromuscular-index.js'
 import flexibilityRouter from './calculations/flexibility.js';
 import sfiRouter from './calculations/sfi.js';
 import somatoRouter from './calculations/somatotypes.js';
+
+import { scheduledJobs } from './routes/automated-procedures.js';
 
 dotenv.config();
 
@@ -54,6 +57,7 @@ app.use('/coach-crud',coachcRUDRouter);
 app.use('/measurements-crud',measurementscRUDRouter);
 app.use('/athlete-stat-crud',athleteStatCRUDRouter);
 app.use('/basic-performance-crud',basicPerformanceCRUDRouter);
+app.use('/model-crud', modelRouter);
 
 app.use('/100m-crud', dash100Router);
 app.use('/200m-crud',dash200Router);
@@ -74,5 +78,8 @@ app.use('/nme', nmeRouter);
 app.use('/flexibility', flexibilityRouter);
 app.use('/sfi', sfiRouter);
 app.use('/somato', somatoRouter);
+
+
+scheduledJobs();
 
 app.listen(PORT, ()=>console.log(`Server listening on ${PORT}`));

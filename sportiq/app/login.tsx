@@ -1,41 +1,45 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import {
+  View, Text, TextInput, StyleSheet, TouchableOpacity,
+  ActivityIndicator, Alert, KeyboardAvoidingView, Platform
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 export default function LoginScreen() {
+
+  const backend_url = "http://localhost:5000";
+
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [nic, setNIC] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+    if (!nic || !password) {
+      Alert.alert('Error', 'Please enter both nic and password');
       return;
     }
 
     setIsLoading(true);
-
     try {
+      console.log(nic, password);
       // Connect to the backend auth endpoint
-      const response = await fetch('http://192.168.0.1:5000/auth/login', {
+      const response = await fetch(`${backend_url}/auth/loginCoach`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ nic, password }),
       });
-
+      console.log("here");
       const data = await response.json();
-
       if (response.ok) {
-        // Save the auth token if needed (you might want to use AsyncStorage for this)
         console.log('Login successful:', data);
-        // Navigate to the main app
         router.replace('/(tabs)');
       } else {
-        // Display error message
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
       }
     } catch (error) {
@@ -52,13 +56,11 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.back()}
-      >
-        <Ionicons name="arrow-back" size={24} color="#333" />
-      </TouchableOpacity>
+    <LinearGradient colors={['#e0ecff', '#f5faff']} style={styles.container}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
 
       <View style={styles.header}>
         <Text style={styles.title}>Login</Text>
@@ -67,70 +69,68 @@ export default function LoginScreen() {
 
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={20} color="#777" style={styles.inputIcon} />
+          <Ionicons name="card-outline" size={20} color="#777" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+            placeholder="NIC"
+            value={nic}
+            onChangeText={setNIC}
             autoCapitalize="none"
           />
         </View>
 
-        <View style={styles.inputContainer}>
-          <Ionicons name="lock-closed-outline" size={20} color="#777" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+        <View style={styles.form}>
+
+          <View style={styles.inputContainer}>
+            <Ionicons name="lock-closed-outline" size={20} color="#777" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.loginButtonText}>Login</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.bypassButton} 
+            onPress={handleBypassLogin}
+          >
+            <Text style={styles.bypassButtonText}>Bypass Login (Dev)</Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={handleLogin}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.loginButtonText}>Login</Text>
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.bypassButton} 
-          onPress={handleBypassLogin}
-        >
-          <Text style={styles.bypassButtonText}>Bypass Login (Dev)</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/signup')}>
-          <Text style={styles.signupText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => router.push('/signup')}>
+            <Text style={styles.signupText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     padding: 20,
   },
   backButton: {
-    marginTop: 40,
+    marginTop: 50,
     width: 40,
     height: 40,
     justifyContent: 'center',
@@ -139,53 +139,68 @@ const styles = StyleSheet.create({
   header: {
     marginTop: 20,
     marginBottom: 40,
+    alignItems: 'center',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 8,
+    color: '#1e2f50',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#555',
+    marginTop: 5,
   },
   form: {
     width: '100%',
+    marginTop: 10,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#ccc',
     borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: '#f9f9f9',
     marginBottom: 16,
-    paddingHorizontal: 10,
+    elevation: 2,
   },
   inputIcon: {
     marginRight: 10,
   },
   input: {
     flex: 1,
-    paddingVertical: 12,
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginBottom: 20,
-  },
-  forgotPasswordText: {
-    color: '#4285F4',
+    fontSize: 16,
+    color: '#333',
   },
   loginButton: {
     backgroundColor: '#4285F4',
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: 10,
+    paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 15,
+    marginTop: 10,
   },
   loginButtonText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 'auto',
+    marginBottom: 30,
+  },
+  footerText: {
+    color: '#444',
+    fontSize: 14,
+  },
+  signupText: {
+    color: '#4285F4',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   bypassButton: {
     padding: 10,
@@ -196,17 +211,4 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 'auto',
-    marginBottom: 20,
-  },
-  footerText: {
-    color: '#666',
-  },
-  signupText: {
-    color: '#4285F4',
-    fontWeight: 'bold',
-  },
-}); 
+});
