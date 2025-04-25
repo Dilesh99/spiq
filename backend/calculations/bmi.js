@@ -28,10 +28,10 @@ router.put('/:athlete_id', /*authenticateToken,*/ async (req, res) => {
 
         if (athleteStatsResult.rows.length > 0) {
             await pool.query('UPDATE AthleteStats SET bmi = $1 WHERE athlete_id = $2', [bmi, athlete_id]);
-            return res.json({ message: 'BMI updated successfully' });
+            return res.json({ bmi, message: 'BMI updated successfully' });
         } else {
             await pool.query('INSERT INTO AthleteStats (athlete_id, bmi) VALUES ($1, $2)', [athlete_id, bmi]);
-            return res.json({ message: 'BMI added successfully' });
+            return res.json({ bmi, message: 'BMI added successfully' });
         }
 
     } catch (err) {

@@ -127,6 +127,16 @@ export default function AthleteDetailsScreen() {
     });
   };
 
+  // Function to handle insights navigation
+  const handleInsights = () => {
+    if (!athlete) return;
+    console.log('Navigate to insights page for athlete:', athlete.athlete_id);
+    router.push({
+      pathname: '/athlete/insights/[id]',
+      params: { id: athlete.athlete_id.toString() }
+    });
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -222,6 +232,11 @@ export default function AthleteDetailsScreen() {
           <TouchableOpacity style={styles.historyButton} onPress={handlePerformanceHistory}>
             <Ionicons name="trending-up" size={20} color="#28a745" style={styles.buttonIcon} />
             <Text style={styles.historyButtonText}>View Performance History</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.insightsButton} onPress={handleInsights}>
+            <Ionicons name="analytics" size={20} color="#6f42c1" style={styles.buttonIcon} />
+            <Text style={styles.insightsButtonText}>Generate Insights</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -332,6 +347,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     width: '100%',
     backgroundColor: '#f0f9f1',
+    marginBottom: 12,
+  },
+  insightsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#6f42c1',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    backgroundColor: '#f5f0ff',
   },
   buttonIcon: {
     marginRight: 8,
@@ -353,6 +381,11 @@ const styles = StyleSheet.create({
   },
   historyButtonText: {
     color: '#28a745',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  insightsButtonText: {
+    color: '#6f42c1',
     fontSize: 16,
     fontWeight: '500',
   },
