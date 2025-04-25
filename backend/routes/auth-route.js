@@ -21,7 +21,7 @@ router.post('/loginCoach', async (req, res) => {
             return res.json({ successful: false });
         }
 
-        let tokens = jwTokens(user.rows[0].username);
+        let tokens = jwTokens(user.rows[0].nic);
 
         const cookieOptions = {
             httpOnly: true,
@@ -48,10 +48,10 @@ router.post('/refresh_token', (req, res) => {
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY, (error, user) => {
             if (error) return res.status(403).json({ error: error.message });
 
-            const {nic } = user;
+            const nic = user.nic;
             let accessToken = jwt.sign({ nic }, process.env.ACCESS_TOKEN_KEY, { expiresIn: '15m' });
 
-            res.json({accessToken});
+            res.json({accessToken, nic});
         });
     } catch (err) {
         console.error(err.message);
