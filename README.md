@@ -25,15 +25,15 @@ By empowering students and coaches with early insights, SportiQ paves the way fo
 
 The application is composed of three major components:
 
-- **Admin Panel** – Manages players, stats, and tournament details.
-- **User Interface (Mobile)** – Enables coaches to add thier students's physical stats and Body measurements.
-- **AI Chatbot (Spiriter)** – Using body measurements, giving the recomendation for best three sports for players that they should nore capble to do.
+- **Coach Interface** – 
+- **User Interface (Mobile)** –
+- **AI Chatbot (Spiriter)** – 
 
 ---
 
 ## 🚀 Key Features
 
-### Coach Panel
+### Coach Inter
 
 
 ### User Interface
@@ -141,10 +141,13 @@ psql -U <user> -d spiq -f database_dump.sql
 ## 📱 User Interface
 
 ### Key Screens
-- **Players View** – Lists all available players (without point details).
-- **Team Builder** – Select 11 players within budget.
-- **My Team** – Displays selected players and remaining budget.
-- **Leaderboard** – Real-time ranking display with current user's highlight.
+- **Home Page** –  Main interface,any user can click the 'Get Started' and go.
+- **Login** – Login page for certified coaches.
+- **Coach Dashbord** – Coach can add their r=team members and see their players stats and body measurements .
+- **Player Profile** – Show him/her vody measurements. performance measurements and generate insights.
+- **Anthropometic Measurements** - Each player's own basic, skinfolds and bone widths measurements.
+- **Recommendations page** - Generate what are the most suitable sports for the player.(3)
+- **Track Performance page** - Above recommended sport's tracking details.
 
 ### Authentication
 - Coach login is secured via token-based access only.
@@ -162,20 +165,19 @@ psql -U <user> -d spiq -f database_dump.sql
 
 - Coach have the login, students can go the app.
 - Coach can add mesurements of their team players.
-- 
-- 
-- 
-- 
-- 
+- Coach will add the correct and confirmed data of their players.
+- Recommend the best 3 suitable sports for athlete.
+- Getting a mean amount of several performance of a player.
+- Getting the average value of a set of stats.
+- Give the most reliable sports according to the details.
 
 ---
 
 ## ✨ Additional Features
 
 - Fully responsive mobile UI (built with ReactNative).
-- Budget and points calculated dynamically.
-- Live leaderboard with auto-refresh.
-- AI-assisted team suggestions.
+- Performence and Body measurements calculated correctly.
+- Algoritham based team suggestions.
 - Secure backend operations with token validation.
 
 ---
@@ -183,9 +185,9 @@ psql -U <user> -d spiq -f database_dump.sql
 ## 🛠️ Guidelines for Stage 2
 
 - Ensure real-time sync across all components.
-- Expand AI chatbot capabilities (e.g., player comparisons).
+- Expand AI chatbot capabilities (e.g., most suitable recommendations for the player ).
 - Add error handling and user-friendly messages.
-- Track player stats accurately during team selection.
+- Track player stats accurately during recommendation process.
 - Implement versioning and document changes in this README.
 
 ---
