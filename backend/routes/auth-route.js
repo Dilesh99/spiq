@@ -9,6 +9,7 @@ const router = express.Router();
 router.post('/loginCoach', async (req, res) => {
     try {
         const { nic, password } = req.body;
+        console.log(nic, password);
         const user = await pool.query('SELECT * FROM coach WHERE nic = $1', [nic]);
 
         if (user.rows.length === 0) {

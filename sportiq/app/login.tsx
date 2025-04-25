@@ -3,30 +3,35 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator,
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+
 export default function LoginScreen() {
+
+  const backend_url = "http://localhost:5000";
+
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [nic, setNIC] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+    if (!nic || !password) {
+      Alert.alert('Error', 'Please enter both nic and password');
       return;
     }
 
     setIsLoading(true);
 
     try {
+      console.log(nic, password);
       // Connect to the backend auth endpoint
-      const response = await fetch('http://192.168.0.1:5000/auth/login', {
+      const response = await fetch(`${backend_url}/auth/loginCoach`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ nic, password }),
       });
-
+      console.log("here");
       const data = await response.json();
 
       if (response.ok) {
@@ -67,13 +72,12 @@ export default function LoginScreen() {
 
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Ionicons name="mail-outline" size={20} color="#777" style={styles.inputIcon} />
+          <Ionicons name="card-outline" size={20} color="#777" style={styles.inputIcon} />
           <TextInput
             style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+            placeholder="NIC"
+            value={nic}
+            onChangeText={setNIC}
             autoCapitalize="none"
           />
         </View>
