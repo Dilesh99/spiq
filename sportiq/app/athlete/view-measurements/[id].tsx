@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Dimensions } from 'react-native';
+const { width, height } = Dimensions.get('window');
 
 // Use IP address instead of localhost for mobile compatibility
 const BACKEND_URL = 'http://18.142.49.203:5000';  // Replace with your computer's actual local IP address
@@ -243,7 +245,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   header: {
-    height: 60,
+    height: height * 0.10,
     backgroundColor: '#007bff',
     flexDirection: 'row',
     alignItems: 'center',
@@ -251,11 +253,13 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 16,
+    marginTop: height * 0.01,
   },
   headerTitle: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: 'bold',
+    marginTop: height * 0.01,
   },
   content: {
     flex: 1,
