@@ -1244,97 +1244,99 @@ export default function AthleteInsightsScreen() {
         visible={showSomatotypeInfo}
         onRequestClose={() => setShowSomatotypeInfo(false)}
       >
-        <TouchableWithoutFeedback onPress={() => setShowSomatotypeInfo(false)}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View style={styles.somatotypeModalContent}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Body Types Explained</Text>
-                  <TouchableOpacity
-                    style={styles.modalCloseButton}
-                    onPress={() => setShowSomatotypeInfo(false)}
-                  >
-                    <Ionicons name="close-circle" size={24} color="#666" />
-                  </TouchableOpacity>
-                </View>
-                
-                <ScrollView style={styles.somatotypeScrollView}>
-                  <View style={styles.somatotypeIntroContainer}>
-                    <Text style={styles.somatotypeIntroText}>
-                      Somatotypes are body types that help categorize physical characteristics and 
-                      predispositions. While most people are a mix of types, understanding your 
-                      dominant type can help optimize training and nutrition.
-                    </Text>
-                  </View>
-                  
-                  <View style={styles.somatotypeIllustrationContainer}>
-                    <Image 
-                      source={{uri: 'https://i.imgur.com/rElnIJM.png'}}
-                      style={styles.somatotypeIllustration}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  
-                  {somatotypeInfo.map((type, index) => (
-                    <View 
-                      key={index} 
-                      style={[
-                        styles.somatotypeCard, 
-                        {borderLeftColor: type.color}
-                      ]}
-                    >
-                      <View style={styles.somatotypeCardHeader}>
-                        <View style={[styles.somatotypeIconContainer, {backgroundColor: type.color}]}>
-                          <Ionicons name={type.icon as any} size={28} color="white" />
-                        </View>
-                        <Text style={styles.somatotypeName}>{type.name}</Text>
-                      </View>
-                      
-                      <Text style={styles.somatotypeDescription}>
-                        {type.description}
-                      </Text>
-                      
-                      <View style={styles.somatotypeTraitsContainer}>
-                        <Text style={styles.somatotypeSubtitle}>Key Traits:</Text>
-                        {type.traits.map((trait, i) => (
-                          <View key={i} style={styles.traitItem}>
-                            <Ionicons name="checkmark-circle" size={16} color={type.color} />
-                            <Text style={styles.traitText}>{trait}</Text>
-                          </View>
-                        ))}
-                      </View>
-                      
-                      <View style={styles.somatotypeAdvantagesContainer}>
-                        <Text style={styles.somatotypeSubtitle}>Athletic Advantages:</Text>
-                        {type.advantages.map((advantage, i) => (
-                          <View key={i} style={styles.traitItem}>
-                            <Ionicons name="star" size={16} color={type.color} />
-                            <Text style={styles.traitText}>{advantage}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    </View>
-                  ))}
-                  
-                  <View style={styles.somatotypeFooter}>
-                    <Text style={styles.somatotypeFooterText}>
-                      Most people are a combination of these three somatotypes. Your dominant somatotype 
-                      can guide your training approach, but remember that with proper training and nutrition, 
-                      you can excel in any sport regardless of your body type.
-                    </Text>
-                  </View>
-                </ScrollView>
-                
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={() => setShowSomatotypeInfo(false)}
-                >
-                  <Text style={styles.closeButtonText}>Close</Text>
-                </TouchableOpacity>
+        <View style={styles.modalOverlay}>
+          <View style={styles.somatotypeModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Body Types Explained</Text>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setShowSomatotypeInfo(false)}
+              >
+                <Ionicons name="close-circle" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              style={styles.somatotypeScrollView}
+              contentContainerStyle={styles.somatotypeScrollContent}
+              showsVerticalScrollIndicator={true}
+              bounces={true}
+              nestedScrollEnabled={true}
+            >
+              <View style={styles.somatotypeIntroContainer}>
+                <Text style={styles.somatotypeIntroText}>
+                  Somatotypes are body types that help categorize physical characteristics and 
+                  predispositions. While most people are a mix of types, understanding your 
+                  dominant type can help optimize training and nutrition.
+                </Text>
               </View>
-            </TouchableWithoutFeedback>
+              
+              <View style={styles.somatotypeIllustrationContainer}>
+                <Image 
+                  source={{uri: 'https://i.imgur.com/rElnIJM.png'}}
+                  style={styles.somatotypeIllustration}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              {somatotypeInfo.map((type, index) => (
+                <View 
+                  key={index} 
+                  style={[
+                    styles.somatotypeCard, 
+                    {borderLeftColor: type.color}
+                  ]}
+                >
+                  <View style={styles.somatotypeCardHeader}>
+                    <View style={[styles.somatotypeIconContainer, {backgroundColor: type.color}]}>
+                      <Ionicons name={type.icon as any} size={28} color="white" />
+                    </View>
+                    <Text style={styles.somatotypeName}>{type.name}</Text>
+                  </View>
+                  
+                  <Text style={styles.somatotypeDescription}>
+                    {type.description}
+                  </Text>
+                  
+                  <View style={styles.somatotypeTraitsContainer}>
+                    <Text style={styles.somatotypeSubtitle}>Key Traits:</Text>
+                    {type.traits.map((trait, i) => (
+                      <View key={i} style={styles.traitItem}>
+                        <Ionicons name="checkmark-circle" size={16} color={type.color} />
+                        <Text style={styles.traitText}>{trait}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  
+                  <View style={styles.somatotypeAdvantagesContainer}>
+                    <Text style={styles.somatotypeSubtitle}>Athletic Advantages:</Text>
+                    {type.advantages.map((advantage, i) => (
+                      <View key={i} style={styles.traitItem}>
+                        <Ionicons name="star" size={16} color={type.color} />
+                        <Text style={styles.traitText}>{advantage}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+              
+              <View style={styles.somatotypeFooter}>
+                <Text style={styles.somatotypeFooterText}>
+                  Most people are a combination of these three somatotypes. Your dominant somatotype 
+                  can guide your training approach, but remember that with proper training and nutrition, 
+                  you can excel in any sport regardless of your body type.
+                </Text>
+              </View>
+            </ScrollView>
+            
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowSomatotypeInfo(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
           </View>
-        </TouchableWithoutFeedback>
+        </View>
       </Modal>
     );
   };
@@ -1905,7 +1907,7 @@ const styles = StyleSheet.create({
   },
   somatotypeModalContent: {
     width: '90%',
-    maxHeight: '85%',
+    height: '80%',
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 20,
@@ -1914,9 +1916,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    flexDirection: 'column',
   },
   somatotypeScrollView: {
+    flex: 1,
     marginBottom: 15,
+  },
+  somatotypeScrollContent: {
+    paddingBottom: 10,
   },
   somatotypeIntroContainer: {
     backgroundColor: '#f8f9fa',
