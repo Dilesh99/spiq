@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 backend/node_modules
 sportiq/node_modules
-=======
-backend/node_modules/
-sportiq/node_modules/
->>>>>>> Stashed changes
 node_modules
+sportiq/.expo/types/router.d.ts
