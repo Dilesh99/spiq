@@ -16,7 +16,7 @@ const BACKEND_URL = 'http://localhost:5000';  // Replace with your computer's ac
 
 // Define measurement types
 interface Measurements {
-  athlete_id: number;
+  athlete_id: string | number;
   height?: number; // cm
   weight?: number; // kg
   uac?: number; // Upper Arm Circumference (cm)
@@ -25,7 +25,7 @@ interface Measurements {
   skinfold_subscapular?: number; // mm
   skinfold_supraspinale?: number; // mm
   skinfold_medial_calf?: number; // mm
-  humerous_width?: number; // cm
+  humerus_width?: number; // cm
   femur_width?: number; // cm
 }
 
@@ -33,12 +33,12 @@ export default function AthleteViewMeasurementsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   // Ensure we properly handle the athlete ID from route params
-  let athleteId = 0;
+  let athleteId = '';
   if (id) {
     if (typeof id === 'string') {
-      athleteId = parseInt(id, 10);
+      athleteId = id;
     } else if (Array.isArray(id) && id.length > 0) {
-      athleteId = parseInt(id[0], 10);
+      athleteId = id[0];
     }
   }
   
@@ -88,9 +88,10 @@ export default function AthleteViewMeasurementsScreen() {
   }, [athleteId]);
 
   const handleEditMeasurements = () => {
+    // Just pass the already extracted athlete ID
     router.push({
       pathname: "/athlete/measurements/[id]",
-      params: { id: typeof id === 'string' ? id : Array.isArray(id) ? id[0] : '' }
+      params: { id: athleteId }
     });
   };
 
@@ -215,7 +216,7 @@ export default function AthleteViewMeasurementsScreen() {
 
           <View style={styles.measurementRow}>
             <Text style={styles.measurementLabel}>Humerus:</Text>
-            <Text style={styles.measurementValue}>{measurements.humerous_width} cm</Text>
+            <Text style={styles.measurementValue}>{measurements.humerus_width} cm</Text>
           </View>
 
           <View style={styles.measurementRow}>

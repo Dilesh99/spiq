@@ -89,18 +89,41 @@ export default function AthleteDetailsScreen() {
 
   // Function to handle measurements navigation
   const handleAddMeasurements = () => {
+    if (!athlete) return;
+    console.log('Navigate to add measurements page for athlete:', athlete.athlete_id);
     router.push({
-      pathname: "/athlete/measurements/[id]",
-      params: { id: typeof id === 'string' ? id : Array.isArray(id) ? id[0] : '' }
+      pathname: '/athlete/measurements/[id]',
+      params: { id: athlete.athlete_id.toString() }
     });
   };
 
   // Function to handle viewing measurements
   const handleViewMeasurements = () => {
-    const athleteId = typeof id === 'string' ? id : Array.isArray(id) ? id[0] : '';
+    if (!athlete) return;
+    console.log('Navigate to view measurements page for athlete:', athlete.athlete_id);
     router.push({
       pathname: '/athlete/view-measurements/[id]',
-      params: { id: athleteId }
+      params: { id: athlete.athlete_id.toString() }
+    });
+  };
+
+  // Function to handle performance measurements navigation
+  const handlePerformanceMeasurements = () => {
+    if (!athlete) return;
+    console.log('Navigate to performance measurements page for athlete:', athlete.athlete_id);
+    router.push({
+      pathname: '/athlete/performance-measurements/[id]',
+      params: { id: athlete.athlete_id.toString() }
+    });
+  };
+
+  // Function to handle performance history navigation
+  const handlePerformanceHistory = () => {
+    if (!athlete) return;
+    console.log('Navigate to performance history page for athlete:', athlete.athlete_id);
+    router.push({
+      pathname: '/athlete/performance-history/[id]',
+      params: { id: athlete.athlete_id.toString() }
     });
   };
 
@@ -190,6 +213,16 @@ export default function AthleteDetailsScreen() {
               <Text style={styles.measurementsButtonText}>Add Measurements</Text>
             </TouchableOpacity>
           )}
+          
+          <TouchableOpacity style={styles.performanceButton} onPress={handlePerformanceMeasurements}>
+            <Ionicons name="stats-chart" size={20} color="#007bff" style={styles.buttonIcon} />
+            <Text style={styles.performanceButtonText}>Performance Measurements</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.historyButton} onPress={handlePerformanceHistory}>
+            <Ionicons name="trending-up" size={20} color="#28a745" style={styles.buttonIcon} />
+            <Text style={styles.historyButtonText}>View Performance History</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -261,8 +294,34 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     width: '100%',
+    marginBottom: 12,
   },
   viewMeasurementsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#28a745',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    backgroundColor: '#f0f9f1',
+    marginBottom: 12,
+  },
+  performanceButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#007bff',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    backgroundColor: '#eaf6ff',
+  },
+  historyButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -283,6 +342,16 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   viewMeasurementsButtonText: {
+    color: '#28a745',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  performanceButtonText: {
+    color: '#007bff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  historyButtonText: {
     color: '#28a745',
     fontSize: 16,
     fontWeight: '500',
@@ -318,6 +387,24 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#28a745',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    backgroundColor: '#f0f9f1',
+    marginBottom: 12,
+  },
+  buttonText: {
+    color: '#28a745',
     fontSize: 16,
     fontWeight: '500',
   },

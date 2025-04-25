@@ -22,7 +22,7 @@ const BACKEND_URL = 'http://localhost:5000';  // Replace with your computer's ac
 
 // Define measurement types
 interface Measurements {
-  athlete_id: number;
+  athlete_id: string | number;
   height?: number; // cm
   weight?: number; // kg
   uac?: number; // Upper Arm Circumference (cm)
@@ -31,7 +31,7 @@ interface Measurements {
   skinfold_subscapular?: number; // mm
   skinfold_supraspinale?: number; // mm
   skinfold_medial_calf?: number; // mm
-  humerous_width?: number; // cm
+  humerus_width?: number; // cm
   femur_width?: number; // cm
 }
 
@@ -57,7 +57,17 @@ enum MeasurementTab {
 export default function AthleteMeasurementsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const athleteId = typeof id === 'string' ? parseInt(id, 10) : 0;
+  // Handle string athlete IDs instead of trying to parse as integers
+  let athleteId = '';
+  if (id) {
+    if (typeof id === 'string') {
+      athleteId = id;
+    } else if (Array.isArray(id) && id.length > 0) {
+      athleteId = id[0];
+    }
+  }
+  
+  console.log('Measurements Input - Athlete ID:', id, 'Parsed ID:', athleteId);
 
   const [measurements, setMeasurements] = useState<Measurements>({
     athlete_id: athleteId,
@@ -69,7 +79,7 @@ export default function AthleteMeasurementsScreen() {
     skinfold_subscapular: undefined,
     skinfold_supraspinale: undefined,
     skinfold_medial_calf: undefined,
-    humerous_width: undefined,
+    humerus_width: undefined,
     femur_width: undefined,
   });
 
@@ -118,7 +128,7 @@ export default function AthleteMeasurementsScreen() {
               skinfold_subscapular: data.skinfold_subscapular,
               skinfold_supraspinale: data.skinfold_supraspinale,
               skinfold_medial_calf: data.skinfold_medial_calf,
-              humerous_width: data.humerous_width,
+              humerus_width: data.humerus_width,
               femur_width: data.femur_width,
             });
           }
@@ -387,8 +397,8 @@ export default function AthleteMeasurementsScreen() {
         <TextInput
           style={styles.fullInput}
           keyboardType="numeric"
-          value={measurements.humerous_width?.toString() || ''}
-          onChangeText={(value) => handleInputChange('humerous_width', value)}
+          value={measurements.humerus_width?.toString() || ''}
+          onChangeText={(value) => handleInputChange('humerus_width', value)}
           placeholder="0.0"
         />
       </View>

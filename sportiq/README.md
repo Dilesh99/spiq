@@ -1,50 +1,67 @@
-# Welcome to your Expo app 👋
+# SportIQ - Athlete Performance Tracking App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+SportIQ is a mobile application built with React Native and Expo that helps coaches track and monitor athlete measurements and performance metrics.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Athlete Profiles**: View and manage athlete details including name, age, gender, and date of birth
+- **Basic Measurements**: Record and track basic body measurements such as height, weight, and body composition
+- **Performance Metrics**: Measure and track athletic performance metrics including:
+  - Sprint times (30m, 100m)
+  - Jumping ability (standing long jump, vertical jump)
+  - Endurance (beep test)
+  - Flexibility (sit and reach)
+  - Reaction time
+  - Strength (grip strength)
+- **Multiple Trial Recording**: Record up to three trials for each performance metric with automatic average calculation
+- **Measurement History**: View historical measurements to track progress over time
+- **Performance Progress Charts**: Visualize performance improvements over time with interactive charts
 
-   ```bash
+## Technical Stack
+
+- **Frontend**: React Native with Expo
+- **Backend**: Node.js REST API
+- **Database**: MongoDB
+- **Navigation**: Expo Router
+- **UI Components**: Native components with custom styling
+
+## Setup Instructions
+
+1. **Clone the repository**
+   ```
+   git clone https://github.com/yourusername/sportiq.git
+   cd sportiq
+   ```
+
+2. **Install dependencies**
+   ```
    npm install
    ```
+   
+3. **Configure backend connection**
+   - Open `app/services/PerformanceService.js` and update the `BACKEND_URL` value to your backend server's address
 
-2. Start the app
-
-   ```bash
-    npx expo start
+4. **Start the development server**
    ```
+   npm start
+   ```
+   
+5. **Run on device or emulator**
+   - Use the Expo Go app to scan the QR code
+   - Or press 'a' to run on Android emulator
+   - Or press 'i' to run on iOS simulator
 
-In the output, you'll find options to open the app in a
+## Project Structure
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **app/** - Main application code
+  - **athlete/** - Athlete-related screens
+    - **details.tsx** - Athlete details screen
+    - **measurements/** - Basic body measurements
+    - **performance-measurements/** - Athletic performance measurements
+    - **performance-history/** - Performance tracking and visualization
+  - **services/** - Service classes for API communication
+  - **components/** - Reusable UI components
+  
+## License
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This project is licensed under the MIT License - see the LICENSE file for details.
