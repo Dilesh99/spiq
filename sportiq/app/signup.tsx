@@ -76,8 +76,12 @@ export default function SignUpScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <View style={styles.photoContainer}>
+        
           <Ionicons name="person-circle-outline" size={100} color="#ccc" />
           <TouchableOpacity style={styles.uploadButton}>
             <Text style={styles.uploadButtonText}>Upload Photo</Text>
@@ -167,6 +171,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  backButton: {
+    marginTop: 50,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 20,
+    
   },
   header: {
     height: 60,
