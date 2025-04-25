@@ -920,7 +920,7 @@ export default function AthleteInsightsScreen() {
           neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
           power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
         },
-        icon: 'resize-horizontal'
+        icon: 'resize'
       },
       {
         name: 'Triple Jump',

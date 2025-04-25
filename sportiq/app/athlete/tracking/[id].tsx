@@ -20,7 +20,15 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 const BACKEND_URL = 'http://18.142.49.203:5000';
 
 // Sport-specific metrics mapping
-const sportMetrics = {
+const sportMetrics: {
+  [key: string]: Array<{
+    key: string;
+    name: string;
+    unit: string;
+    description: string;
+    icon: string;
+  }>
+} = {
   'Sprint Running': [
     { key: 'sprint_time', name: 'Sprint Time', unit: 'sec', description: 'Time to complete sprint', icon: 'stopwatch' },
     { key: 'max_speed', name: 'Maximum Speed', unit: 'm/s', description: 'Maximum speed reached', icon: 'speedometer' },
@@ -29,7 +37,7 @@ const sportMetrics = {
   'Swimming': [
     { key: 'lap_time', name: 'Lap Time', unit: 'sec', description: 'Time to complete a single lap', icon: 'time' },
     { key: 'stroke_count', name: 'Stroke Count', unit: 'count', description: 'Number of strokes per lap', icon: 'repeat' },
-    { key: 'distance', name: 'Distance', unit: 'm', description: 'Total distance covered', icon: 'resize-horizontal' },
+    { key: 'distance', name: 'Distance', unit: 'm', description: 'Total distance covered', icon: 'resize' },
   ],
   'Basketball': [
     { key: 'free_throw_pct', name: 'Free Throw %', unit: '%', description: 'Free throw success rate', icon: 'basketball' },
@@ -70,6 +78,11 @@ const sportMetrics = {
     { key: 'strikes', name: 'Strikes', unit: 'count', description: 'Number of successful strikes', icon: 'hand-right' },
     { key: 'takedowns', name: 'Takedowns', unit: 'count', description: 'Number of successful takedowns', icon: 'arrow-down' },
     { key: 'submissions', name: 'Submissions', unit: 'count', description: 'Number of submission attempts', icon: 'lock-closed' },
+  ],
+  'Long Jump': [
+    { key: 'distance', name: 'Jump Distance', unit: 'm', description: 'Distance jumped', icon: 'resize' },
+    { key: 'approach_speed', name: 'Approach Speed', unit: 'm/s', description: 'Speed during approach', icon: 'speedometer' },
+    { key: 'take_off_angle', name: 'Take-off Angle', unit: '°', description: 'Angle of take-off', icon: 'analytics' },
   ],
   // Default metrics for any other sport
   'default': [
@@ -318,12 +331,16 @@ export default function SportTrackingScreen() {
                     <View key={index} style={styles.historyCard}>
                       <View style={styles.historyHeader}>
                         <Text style={styles.historyDate}>{new Date(entry.date).toLocaleDateString()}</Text>
-                        <Ionicons name={sportMetrics[selectedSport]?.[0]?.icon || 'fitness'} size={24} color="#007bff" />
+                        <Ionicons 
+                          name={(sportMetrics[selectedSport]?.[0]?.icon as any) || 'fitness'} 
+                          size={24} 
+                          color="#007bff" 
+                        />
                       </View>
                       
                       <View style={styles.metricsContainer}>
                         {Object.entries(entry.metrics).map(([key, value], idx) => {
-                          const metricDef = getMetricsForSport(selectedSport).find(m => m.key === key);
+                          const metricDef = getMetricsForSport(selectedSport).find((m: { key: string }) => m.key === key);
                           if (!metricDef) return null;
                           
                           return (
@@ -421,7 +438,7 @@ export default function SportTrackingScreen() {
                 </TouchableOpacity>
               </View>
               
-              {getMetricsForSport(selectedSport).map((metric, index) => (
+              {getMetricsForSport(selectedSport).map((metric: { key: string; name: string; unit: string; description: string; icon: string }, index: number) => (
                 <View key={index} style={styles.metricInputContainer}>
                   <View style={styles.metricLabelContainer}>
                     <Ionicons name={metric.icon as any} size={20} color="#007bff" />
