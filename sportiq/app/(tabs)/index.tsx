@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f6fc',
   },
   headerBar: {
-    height: 70,
+    height: 77,
     backgroundColor: '#007bff',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 19,
     fontWeight: '600',
-    marginTop:10
+    marginTop:15
   },
   coachName: {
     color: '#fff',
