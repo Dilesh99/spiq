@@ -1,8 +1,6 @@
 
 # 🏏 SpiQ - Mobile Application
-
-A secure and user-friendly mobile platform for cricket player selection, allowing users to build their fantasy teams for inter-university tournaments.
-
+SportiQ is a mobile application designed to help Sri Lankan school athletes identify the most suitable sport for their unique body type and biometrics.
 ---
 
 ## 📋 Table of Contents
@@ -20,7 +18,10 @@ A secure and user-friendly mobile platform for cricket player selection, allowin
 
 ## 📖 Overview
 
-**SpiQ** is the ultimate mobile application where student can identify as a player what are the three sports that they are most suiatble for their physical condition and coach can identify their students which are most prefect for relevent games.
+**SpiQ** is the ultimate mobile application where student can identify as a player what are the three sports that they are most suiatble for their physical condition and coach can identify their students which are most prefect for relevent games. Many students unknowingly choose sports that don’t match their natural physical strengths, often realizing it only after years of effort. SportiQ aims to change that by offering a scientific and accessible solution to recommend ideal sports based on key biometric data like height, weight, arm span, and more.
+
+By empowering students and coaches with early insights, SportiQ paves the way for smarter sport selection, improved performance, and a brighter future for Sri Lankan athletics.
+
 
 The application is composed of three major components:
 
