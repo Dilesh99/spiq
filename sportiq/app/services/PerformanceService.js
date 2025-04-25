@@ -1,5 +1,5 @@
 // Performance measurement service
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'http://18.142.49.203:5000';
 
 /**
  * @typedef {Object} PerformanceMeasurement

@@ -14,7 +14,7 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 // Backend URL
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'http://18.142.49.203:5000';
 
 // Import global variables from insights page
 // Access these through the global scope

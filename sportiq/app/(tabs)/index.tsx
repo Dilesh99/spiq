@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 // Real backend URL - adjust as needed
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'http://18.142.49.203:5000';
 
 // Define athlete type
 interface Athlete {
