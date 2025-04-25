@@ -1,4 +1,3 @@
-
 # 🏏 SpiQ - Mobile Application
 SportiQ is a mobile application designed to help Sri Lankan school athletes identify the most suitable sport for their unique body type and biometrics.
 ---
@@ -33,7 +32,7 @@ The application is composed of three major components:
 
 ## 🚀 Key Features
 
-### Coach Inter
+### Coach Interface
 
 
 ### User Interface
