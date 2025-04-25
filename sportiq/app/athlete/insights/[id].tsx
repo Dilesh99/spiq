@@ -14,6 +14,7 @@ import {
   RefreshControl,
   TouchableWithoutFeedback,
   Linking,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -70,6 +71,7 @@ export default function AthleteInsightsScreen() {
   const [recommendations, setRecommendations] = useState<SportRecommendation[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [showSomatotypeInfo, setShowSomatotypeInfo] = useState(false);
 
   // DB field to stat mapping
   const dbFieldToStatMapping = {
@@ -557,7 +559,17 @@ export default function AthleteInsightsScreen() {
           
         case 'somatotype':
           if ('dominant' in value) {
-            return value.dominant;
+            return (
+              <View style={styles.somatotypeContainer}>
+                <Text style={styles.somatotypeValue}>{value.dominant}</Text>
+                <TouchableOpacity 
+                  style={styles.somatotypeInfoButton}
+                  onPress={() => setShowSomatotypeInfo(true)}
+                >
+                  <Ionicons name="information-circle" size={20} color="#007bff" />
+                </TouchableOpacity>
+              </View>
+            );
           }
           break;
       }
@@ -1206,6 +1218,137 @@ export default function AthleteInsightsScreen() {
     }
   };
 
+  // Render somatotype info modal
+  const renderSomatotypeInfoModal = () => {
+    const somatotypeInfo = [
+      {
+        name: 'Ectomorph',
+        description: 'Characterized by a lean and thin body with difficulty gaining weight. Ectomorphs typically have a light build, small joints, and thin muscles.',
+        traits: ['Fast metabolism', 'Long limbs', 'Difficulty gaining weight', 'Narrow shoulders and hips'],
+        advantages: ['Good endurance', 'Efficient cooling system', 'Excel at activities like running'],
+        color: '#3498db',
+        icon: 'body'
+      },
+      {
+        name: 'Mesomorph',
+        description: 'Characterized by a naturally athletic and solid body. Mesomorphs can gain muscle easily and tend to be strong and naturally athletic.',
+        traits: ['Athletic build', 'Efficient metabolism', 'Responds quickly to exercise', 'Rectangular shaped body'],
+        advantages: ['Natural strength', 'Balanced proportions', 'Excel at activities requiring power and agility'],
+        color: '#2ecc71',
+        icon: 'fitness'
+      },
+      {
+        name: 'Endomorph',
+        description: 'Characterized by a higher body fat, larger bone structure, and tendency to gain weight easily. Endomorphs typically have a soft and round body.',
+        traits: ['Slower metabolism', 'Strong lower body', 'Tendency to store fat', 'Wider hips and shoulders'],
+        advantages: ['Natural strength', 'Lower center of gravity', 'Excel at activities requiring stability and power'],
+        color: '#e74c3c',
+        icon: 'man'
+      }
+    ];
+
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showSomatotypeInfo}
+        onRequestClose={() => setShowSomatotypeInfo(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowSomatotypeInfo(false)}>
+          <View style={styles.modalOverlay}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.somatotypeModalContent}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Body Types Explained</Text>
+                  <TouchableOpacity
+                    style={styles.modalCloseButton}
+                    onPress={() => setShowSomatotypeInfo(false)}
+                  >
+                    <Ionicons name="close-circle" size={24} color="#666" />
+                  </TouchableOpacity>
+                </View>
+                
+                <ScrollView style={styles.somatotypeScrollView}>
+                  <View style={styles.somatotypeIntroContainer}>
+                    <Text style={styles.somatotypeIntroText}>
+                      Somatotypes are body types that help categorize physical characteristics and 
+                      predispositions. While most people are a mix of types, understanding your 
+                      dominant type can help optimize training and nutrition.
+                    </Text>
+                  </View>
+                  
+                  <View style={styles.somatotypeIllustrationContainer}>
+                    <Image 
+                      source={{uri: 'https://i.imgur.com/rElnIJM.png'}}
+                      style={styles.somatotypeIllustration}
+                      resizeMode="contain"
+                    />
+                  </View>
+                  
+                  {somatotypeInfo.map((type, index) => (
+                    <View 
+                      key={index} 
+                      style={[
+                        styles.somatotypeCard, 
+                        {borderLeftColor: type.color}
+                      ]}
+                    >
+                      <View style={styles.somatotypeCardHeader}>
+                        <View style={[styles.somatotypeIconContainer, {backgroundColor: type.color}]}>
+                          <Ionicons name={type.icon as any} size={28} color="white" />
+                        </View>
+                        <Text style={styles.somatotypeName}>{type.name}</Text>
+                      </View>
+                      
+                      <Text style={styles.somatotypeDescription}>
+                        {type.description}
+                      </Text>
+                      
+                      <View style={styles.somatotypeTraitsContainer}>
+                        <Text style={styles.somatotypeSubtitle}>Key Traits:</Text>
+                        {type.traits.map((trait, i) => (
+                          <View key={i} style={styles.traitItem}>
+                            <Ionicons name="checkmark-circle" size={16} color={type.color} />
+                            <Text style={styles.traitText}>{trait}</Text>
+                          </View>
+                        ))}
+                      </View>
+                      
+                      <View style={styles.somatotypeAdvantagesContainer}>
+                        <Text style={styles.somatotypeSubtitle}>Athletic Advantages:</Text>
+                        {type.advantages.map((advantage, i) => (
+                          <View key={i} style={styles.traitItem}>
+                            <Ionicons name="star" size={16} color={type.color} />
+                            <Text style={styles.traitText}>{advantage}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  ))}
+                  
+                  <View style={styles.somatotypeFooter}>
+                    <Text style={styles.somatotypeFooterText}>
+                      Most people are a combination of these three somatotypes. Your dominant somatotype 
+                      can guide your training approach, but remember that with proper training and nutrition, 
+                      you can excel in any sport regardless of your body type.
+                    </Text>
+                  </View>
+                </ScrollView>
+                
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => setShowSomatotypeInfo(false)}
+                >
+                  <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    );
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1376,6 +1519,9 @@ export default function AthleteInsightsScreen() {
 
       {/* Render the recommendations modal */}
       {renderRecommendationsModal()}
+
+      {/* Render somatotype info modal */}
+      {renderSomatotypeInfoModal()}
     </SafeAreaView>
   );
 }
@@ -1732,5 +1878,123 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
+  },
+  somatotypeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  somatotypeValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  somatotypeInfoButton: {
+    padding: 5,
+    marginLeft: 6,
+  },
+  somatotypeModalContent: {
+    width: '90%',
+    maxHeight: '85%',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  somatotypeScrollView: {
+    marginBottom: 15,
+  },
+  somatotypeIntroContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 20,
+  },
+  somatotypeIntroText: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+  },
+  somatotypeIllustrationContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  somatotypeIllustration: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+  },
+  somatotypeCard: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 15,
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  somatotypeCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  somatotypeIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  somatotypeName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  somatotypeDescription: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+    marginBottom: 15,
+  },
+  somatotypeTraitsContainer: {
+    marginBottom: 15,
+  },
+  somatotypeAdvantagesContainer: {
+    marginBottom: 10,
+  },
+  somatotypeSubtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  traitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  traitText: {
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 8,
+  },
+  somatotypeFooter: {
+    backgroundColor: '#eaf6ff',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  somatotypeFooterText: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
   },
 }); 
