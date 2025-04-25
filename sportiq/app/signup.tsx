@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView, View, Text, TextInput, TouchableOpacity, Image, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -10,10 +11,67 @@ export default function SignUpScreen() {
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = () => {
-    router.replace('/login');
+  const backend_url = "http://18.142.49.203:5000";
+
+  const handleSignUp = async () => {
+    if (nic === '' || email === '' || fullName === '' || password === '' || confirmPassword === '') {
+      console.debug('SignUp Error: One or more fields are empty');
+      Alert.alert('Error', 'Please enter all fields');
+      return;
+    } else if (password !== confirmPassword) {
+      console.debug('SignUp Error: Password and Confirm Password do not match');
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${backend_url}/coach-crud`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nic, email, name: fullName, password }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.message === "coach created successfully") {
+        console.debug('SignUp Success:', data.message);
+        const response2 = await fetch(`${backend_url}/auth/loginCoach`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ nic, password }),
+        });
+
+        const data2 = await response2.json();
+        await AsyncStorage.setItem('refreshToken', data2.refreshToken);
+
+        if (data2.successful) {
+          Alert.alert('Success', 'Account created successfully');
+          router.replace('/(tabs)');
+        } else {
+          Alert.alert('Error', data2.error);
+          return;
+        }
+      } else {
+        console.debug('SignUp Error: Unexpected response status', data.message);
+        Alert.alert(`Error : User already exists`);
+      }
+    } catch (error) {
+      console.debug('SignUp Exception:', error);
+      Alert.alert(`Error : , ${error}`);
+      return;
+    } finally {
+      setIsLoading(false);
+    }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,9 +152,11 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp}>
-          <Text style={styles.signUpButtonText}>Sign Up</Text>
+        <TouchableOpacity style={styles.signUpButton} onPress={handleSignUp} disabled={isLoading}>
+          {isLoading ? <ActivityIndicator size="large" color="#007bff" /> :
+            <Text style={styles.signUpButtonText}>Sign Up</Text>}
         </TouchableOpacity>
+
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, StyleSheet, TouchableOpacity,
   ActivityIndicator, Alert, KeyboardAvoidingView, Platform
@@ -6,6 +6,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function LoginScreen() {
@@ -17,6 +18,40 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    autoLogin();
+  }, []);
+
+  const autoLogin = async () => {
+    try {
+      const tempToken = await AsyncStorage.getItem('refreshToken');
+      if (!tempToken) {
+        return;
+      }
+
+      const response = await fetch(`${backend_url}/auth/refresh_token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken: tempToken }),
+      });
+      const data = await response.json();
+      if (data.accessToken) {
+        router.replace('/(tabs)');
+      }
+      else {
+        await AsyncStorage.removeItem('refreshToken');
+      }
+    }
+    catch (error) {
+      Alert.alert(`Error : ${error}`);
+    }
+    finally {
+
+    }
+  }
+
   const handleLogin = async () => {
     if (!nic || !password) {
       Alert.alert('Error', 'Please enter both nic and password');
@@ -25,7 +60,6 @@ export default function LoginScreen() {
 
     setIsLoading(true);
     try {
-      console.log(nic, password);
       // Connect to the backend auth endpoint
       const response = await fetch(`${backend_url}/auth/loginCoach`, {
         method: 'POST',
@@ -34,17 +68,18 @@ export default function LoginScreen() {
         },
         body: JSON.stringify({ nic, password }),
       });
-      console.log("here");
       const data = await response.json();
-      if (response.ok) {
-        console.log('Login successful:', data);
+      if (data.successful) {
+        await AsyncStorage.setItem('refreshToken', data.refreshToken);
         router.replace('/(tabs)');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');
+        return;
       }
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', 'Failed to connect to the server. Please try again later.');
+      return;
     } finally {
       setIsLoading(false);
     }
@@ -62,62 +97,62 @@ export default function LoginScreen() {
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
 
-      <View style={styles.header}>
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.subtitle}>Sign in to your SportIQ account</Text>
-      </View>
-
-      <View style={styles.form}>
-        <View style={styles.inputContainer}>
-          <Ionicons name="card-outline" size={20} color="#777" style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="NIC"
-            value={nic}
-            onChangeText={setNIC}
-            autoCapitalize="none"
-          />
+        <View style={styles.header}>
+          <Text style={styles.title}>Login</Text>
+          <Text style={styles.subtitle}>Sign in to your SportIQ account</Text>
         </View>
 
         <View style={styles.form}>
-
           <View style={styles.inputContainer}>
-            <Ionicons name="lock-closed-outline" size={20} color="#777" style={styles.inputIcon} />
+            <Ionicons name="card-outline" size={20} color="#777" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
+              placeholder="NIC"
+              value={nic}
+              onChangeText={setNIC}
+              autoCapitalize="none"
             />
           </View>
 
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text style={styles.loginButtonText}>Login</Text>
-            )}
-          </TouchableOpacity>
+          <View style={styles.form}>
 
-          <TouchableOpacity 
-            style={styles.bypassButton} 
-            onPress={handleBypassLogin}
-          >
-            <Text style={styles.bypassButtonText}>Bypass Login (Dev)</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#777" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+            </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/signup')}>
-            <Text style={styles.signupText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={handleLogin}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text style={styles.loginButtonText}>Login</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.bypassButton}
+              onPress={handleBypassLogin}
+            >
+              <Text style={styles.bypassButtonText}>Bypass Login (Dev)</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => router.push('/signup')}>
+              <Text style={styles.signupText}>Sign Up</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </LinearGradient>
