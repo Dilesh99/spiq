@@ -163,7 +163,7 @@ export default function HomeScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerBar}>
         <Text style={styles.headerText}>Coach Dashboard</Text>
-        <Text style={styles.coachName}>vihanga</Text>
+        
       </View>
       <FlatList
         data={athletes}
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f6fc',
   },
   headerBar: {
-    height: 60,
+    height: 70,
     backgroundColor: '#007bff',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -209,8 +209,9 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: '600',
+    marginTop:10
   },
   coachName: {
     color: '#fff',
