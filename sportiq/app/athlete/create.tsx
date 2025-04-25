@@ -14,6 +14,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Dimensions } from 'react-native';
+const { width, height } = Dimensions.get('window');
+
 // Import with type assertion to avoid TypeScript error
 // @ts-ignore
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   header: {
-    height: 60,
+    height: height * 0.10,
     backgroundColor: '#007bff',
     flexDirection: 'row',
     alignItems: 'center',
@@ -290,11 +293,13 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 16,
+    marginTop: height * 0.01,
   },
   headerTitle: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: 'bold',
+    marginTop: height * 0.01,
   },
   content: {
     flex: 1,
