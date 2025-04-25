@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ApiService from './services/ApiService';
 
 
 export default function LoginScreen() {
@@ -29,26 +30,15 @@ export default function LoginScreen() {
         return;
       }
 
-      const response = await fetch(`${backend_url}/auth/refresh_token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken: tempToken }),
-      });
-      const data = await response.json();
-      if (data.accessToken) {
+      const data = await ApiService.refreshToken();
+      if (data) {
         router.replace('/(tabs)');
-      }
-      else {
+      } else {
         await AsyncStorage.removeItem('refreshToken');
       }
     }
     catch (error) {
       Alert.alert(`Error : ${error}`);
-    }
-    finally {
-
     }
   }
 
@@ -61,16 +51,11 @@ export default function LoginScreen() {
     setIsLoading(true);
     try {
       // Connect to the backend auth endpoint
-      const response = await fetch(`${backend_url}/auth/loginCoach`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nic, password }),
-      });
-      const data = await response.json();
+      const data = await ApiService.post('auth/loginCoach', { nic, password }, false);
+      
       if (data.successful) {
         await AsyncStorage.setItem('refreshToken', data.refreshToken);
+        await AsyncStorage.setItem('accessToken', data.accessToken);
         router.replace('/(tabs)');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');

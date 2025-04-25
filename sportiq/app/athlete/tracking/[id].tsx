@@ -32,15 +32,58 @@ const sportMetrics: {
     icon: string;
   }>
 } = {
-  'Sprint Running': [
+  '100m Sprint': [
     { key: 'sprint_time', name: 'Sprint Time', unit: 'sec', description: 'Time to complete sprint', icon: 'stopwatch' },
-    { key: 'max_speed', name: 'Maximum Speed', unit: 'm/s', description: 'Maximum speed reached', icon: 'speedometer' },
-    { key: 'reaction_time', name: 'Reaction Time', unit: 'ms', description: 'Time to react to start signal', icon: 'flash' },
+    { key: 'sprint_time_trial1', name: 'Trial 1', unit: 'sec', description: 'First trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial2', name: 'Trial 2', unit: 'sec', description: 'Second trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial3', name: 'Trial 3', unit: 'sec', description: 'Third trial time', icon: 'stopwatch' },
+  ],
+  '200m Sprint': [
+    { key: 'sprint_time', name: 'Sprint Time', unit: 'sec', description: 'Time to complete sprint', icon: 'stopwatch' },
+    { key: 'sprint_time_trial1', name: 'Trial 1', unit: 'sec', description: 'First trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial2', name: 'Trial 2', unit: 'sec', description: 'Second trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial3', name: 'Trial 3', unit: 'sec', description: 'Third trial time', icon: 'stopwatch' },
+  ],
+  '400m Sprint': [
+    { key: 'sprint_time', name: 'Sprint Time', unit: 'sec', description: 'Time to complete sprint', icon: 'stopwatch' },
+    { key: 'sprint_time_trial1', name: 'Trial 1', unit: 'sec', description: 'First trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial2', name: 'Trial 2', unit: 'sec', description: 'Second trial time', icon: 'stopwatch' },
+    { key: 'sprint_time_trial3', name: 'Trial 3', unit: 'sec', description: 'Third trial time', icon: 'stopwatch' },
+  ],
+  'Hurdles': [
+    { key: 'hurdle_time', name: 'Hurdle Time', unit: 'sec', description: 'Time to complete hurdles', icon: 'stopwatch' },
+    { key: 'hurdle_time_trial1', name: 'Trial 1', unit: 'sec', description: 'First trial time', icon: 'stopwatch' },
+    { key: 'hurdle_time_trial2', name: 'Trial 2', unit: 'sec', description: 'Second trial time', icon: 'stopwatch' },
+    { key: 'hurdle_time_trial3', name: 'Trial 3', unit: 'sec', description: 'Third trial time', icon: 'stopwatch' },
+  ],
+  'Vertical Jump': [
+    { key: 'jump_height', name: 'Jump Height', unit: 'cm', description: 'Height of vertical jump', icon: 'trending-up' },
+    { key: 'jump_height_trial1', name: 'Trial 1', unit: 'cm', description: 'First trial height', icon: 'trending-up' },
+    { key: 'jump_height_trial2', name: 'Trial 2', unit: 'cm', description: 'Second trial height', icon: 'trending-up' },
+    { key: 'jump_height_trial3', name: 'Trial 3', unit: 'cm', description: 'Third trial height', icon: 'trending-up' },
+  ],
+  'Long Jump': [
+    { key: 'distance', name: 'Jump Distance', unit: 'm', description: 'Distance of long jump', icon: 'resize' },
+    { key: 'distance_trial1', name: 'Trial 1', unit: 'm', description: 'First trial distance', icon: 'resize' },
+    { key: 'distance_trial2', name: 'Trial 2', unit: 'm', description: 'Second trial distance', icon: 'resize' },
+    { key: 'distance_trial3', name: 'Trial 3', unit: 'm', description: 'Third trial distance', icon: 'resize' },
+  ],
+  'Triple Jump': [
+    { key: 'distance', name: 'Jump Distance', unit: 'm', description: 'Distance of triple jump', icon: 'resize' },
+    { key: 'distance_trial1', name: 'Trial 1', unit: 'm', description: 'First trial distance', icon: 'resize' },
+    { key: 'distance_trial2', name: 'Trial 2', unit: 'm', description: 'Second trial distance', icon: 'resize' },
+    { key: 'distance_trial3', name: 'Trial 3', unit: 'm', description: 'Third trial distance', icon: 'resize' },
   ],
   'Swimming': [
     { key: 'lap_time', name: 'Lap Time', unit: 'sec', description: 'Time to complete a single lap', icon: 'time' },
     { key: 'stroke_count', name: 'Stroke Count', unit: 'count', description: 'Number of strokes per lap', icon: 'repeat' },
     { key: 'distance', name: 'Distance', unit: 'm', description: 'Total distance covered', icon: 'resize' },
+  ],
+  // Add other sports as they were
+  'Sprint Running': [
+    { key: 'sprint_time', name: 'Sprint Time', unit: 'sec', description: 'Time to complete sprint', icon: 'stopwatch' },
+    { key: 'max_speed', name: 'Maximum Speed', unit: 'm/s', description: 'Maximum speed reached', icon: 'speedometer' },
+    { key: 'reaction_time', name: 'Reaction Time', unit: 'ms', description: 'Time to react to start signal', icon: 'flash' },
   ],
   'Basketball': [
     { key: 'free_throw_pct', name: 'Free Throw %', unit: '%', description: 'Free throw success rate', icon: 'basketball' },
@@ -81,11 +124,6 @@ const sportMetrics: {
     { key: 'strikes', name: 'Strikes', unit: 'count', description: 'Number of successful strikes', icon: 'hand-right' },
     { key: 'takedowns', name: 'Takedowns', unit: 'count', description: 'Number of successful takedowns', icon: 'arrow-down' },
     { key: 'submissions', name: 'Submissions', unit: 'count', description: 'Number of submission attempts', icon: 'lock-closed' },
-  ],
-  'Long Jump': [
-    { key: 'distance', name: 'Jump Distance', unit: 'm', description: 'Distance jumped', icon: 'resize' },
-    { key: 'approach_speed', name: 'Approach Speed', unit: 'm/s', description: 'Speed during approach', icon: 'speedometer' },
-    { key: 'take_off_angle', name: 'Take-off Angle', unit: '°', description: 'Angle of take-off', icon: 'analytics' },
   ],
   // Default metrics for any other sport
   'default': [
@@ -198,67 +236,144 @@ export default function SportTrackingScreen() {
   };
 
   const handleSaveTrackingData = async () => {
-    if (!selectedSport) {
-      Alert.alert('Error', 'Please select a sport');
+    if (!selectedSport || !selectedDate) {
+      Alert.alert('Error', 'Please select a sport and date');
       return;
     }
-
-    // Validate metrics
-    const sportMetricsList = getMetricsForSport(selectedSport);
-    let hasData = false;
-    
-    for (const metric of sportMetricsList) {
-      if (metrics[metric.key] !== undefined && metrics[metric.key] !== '') {
-        hasData = true;
-        break;
-      }
-    }
-
-    if (!hasData) {
-      Alert.alert('Error', 'Please enter at least one measurement');
-      return;
-    }
-
-    setIsSaving(true);
 
     try {
-      // Format date to YYYY-MM-DD
-      const formattedDate = selectedDate.toISOString().split('T')[0];
+      setIsSaving(true);
+
+      // Find the metrics for the selected sport or use default
+      const sportMetricsList = getMetricsForSport(selectedSport);
       
-      const trackingData: TrackingData = {
-        athlete_id: athleteId,
-        sport: selectedSport,
-        date: formattedDate,
-        metrics: metrics
-      };
-
-      // Replace with actual endpoint when available
-      const response = await fetch(`${BACKEND_URL}/athlete-tracking`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(trackingData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server responded with status ${response.status}`);
+      // Extract trial values for the main measurement from the tracking data
+      const trialValues = [];
+      let mainMetricName = '';
+      
+      // Determine which sport is selected and extract trial values
+      if (selectedSport.includes('Sprint') || selectedSport === 'Hurdles') {
+        // For sprints and hurdles, we measure time
+        const trial1 = parseFloat(metrics['sprint_time_trial1']?.toString() || '0');
+        const trial2 = parseFloat(metrics['sprint_time_trial2']?.toString() || '0');
+        const trial3 = parseFloat(metrics['sprint_time_trial3']?.toString() || '0');
+        
+        if (trial1 > 0) trialValues.push(trial1);
+        if (trial2 > 0) trialValues.push(trial2);
+        if (trial3 > 0) trialValues.push(trial3);
+        
+        mainMetricName = selectedSport.includes('Sprint') ? 'sprint_time' : 'hurdle_time';
+      } 
+      else if (selectedSport === 'Vertical Jump') {
+        // For vertical jump, we measure height
+        const trial1 = parseFloat(metrics['jump_height_trial1']?.toString() || '0');
+        const trial2 = parseFloat(metrics['jump_height_trial2']?.toString() || '0');
+        const trial3 = parseFloat(metrics['jump_height_trial3']?.toString() || '0');
+        
+        if (trial1 > 0) trialValues.push(trial1);
+        if (trial2 > 0) trialValues.push(trial2);
+        if (trial3 > 0) trialValues.push(trial3);
+        
+        mainMetricName = 'jump_height';
+      }
+      else if (selectedSport === 'Long Jump' || selectedSport === 'Triple Jump') {
+        // For jumps, we measure distance
+        const trial1 = parseFloat(metrics['distance_trial1']?.toString() || '0');
+        const trial2 = parseFloat(metrics['distance_trial2']?.toString() || '0');
+        const trial3 = parseFloat(metrics['distance_trial3']?.toString() || '0');
+        
+        if (trial1 > 0) trialValues.push(trial1);
+        if (trial2 > 0) trialValues.push(trial2);
+        if (trial3 > 0) trialValues.push(trial3);
+        
+        mainMetricName = 'distance';
       }
 
-      const data = await response.json();
+      // Calculate mean of trial values if we have any
+      let meanValue = 0;
+      if (trialValues.length > 0) {
+        meanValue = trialValues.reduce((sum, val) => sum + val, 0) / trialValues.length;
+      }
+
+      // Calculate athlete's age
+      let athleteAge = 0;
+      if (global.ATHLETE_DATA && global.ATHLETE_DATA.dob) {
+        const birthDate = new Date(global.ATHLETE_DATA.dob);
+        const today = new Date();
+        athleteAge = today.getFullYear() - birthDate.getFullYear();
+        
+        // Adjust age if birthday hasn't occurred yet this year
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+          athleteAge--;
+        }
+      }
+
+      // Prepare the tracking data for submission
+      const submissionData = {
+        athlete_id: global.ATHLETE_DATA?.id,
+        date: selectedDate,
+        sport: selectedSport,
+        age: athleteAge,
+        [mainMetricName]: meanValue.toFixed(2)
+      };
+
+      // Submit to general tracking endpoint
+      await fetch(`${BACKEND_URL}/tracking`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${global.TOKEN}`,
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      // Submit to specific sport endpoint based on the sport type
+      let sportEndpoint = '';
       
-      // Add the new entry to the list
-      setTrackingEntries(prev => [...prev, data]);
-      setHistoryData(prev => [...prev, data]);
+      if (selectedSport === '100m Sprint') {
+        sportEndpoint = '/100m-crud';
+      } else if (selectedSport === '200m Sprint') {
+        sportEndpoint = '/200m-crud';
+      } else if (selectedSport === '400m Sprint') {
+        sportEndpoint = '/400m-crud';
+      } else if (selectedSport === 'Hurdles') {
+        sportEndpoint = '/hurdles-crud';
+      } else if (selectedSport === 'Vertical Jump') {
+        sportEndpoint = '/vertical-jump-crud';
+      } else if (selectedSport === 'Long Jump') {
+        sportEndpoint = '/long-jump-crud';
+      } else if (selectedSport === 'Triple Jump') {
+        sportEndpoint = '/triple-jump-crud';
+      }
+
+      if (sportEndpoint) {
+        // Sport-specific data submission
+        const sportData = {
+          athlete_id: global.ATHLETE_DATA?.id,
+          age: athleteAge,
+          output: meanValue.toFixed(2)
+        };
+
+        await fetch(`${BACKEND_URL}${sportEndpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${global.TOKEN}`,
+          },
+          body: JSON.stringify(sportData),
+        });
+      }
+
+      Alert.alert('Success', 'Tracking data saved successfully');
       
       // Reset form
       setMetrics({});
       setSelectedDate(new Date());
       
-      Alert.alert('Success', 'Training data saved successfully');
     } catch (error) {
       console.error('Error saving tracking data:', error);
-      Alert.alert('Error', 'Failed to save training data');
+      Alert.alert('Error', 'Failed to save tracking data');
     } finally {
       setIsSaving(false);
     }

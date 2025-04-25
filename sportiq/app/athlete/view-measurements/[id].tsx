@@ -25,7 +25,7 @@ interface Measurements {
   skinfold_subscapular?: number; // mm
   skinfold_supraspinale?: number; // mm
   skinfold_medial_calf?: number; // mm
-  humerus_width?: number; // cm
+  humerous_width?: number; // cm
   femur_width?: number; // cm
 }
 
@@ -216,7 +216,7 @@ export default function AthleteViewMeasurementsScreen() {
 
           <View style={styles.measurementRow}>
             <Text style={styles.measurementLabel}>Humerus:</Text>
-            <Text style={styles.measurementValue}>{measurements.humerus_width} cm</Text>
+            <Text style={styles.measurementValue}>{measurements.humerous_width} cm</Text>
           </View>
 
           <View style={styles.measurementRow}>

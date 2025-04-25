@@ -1,5 +1,5 @@
 // Athlete statistics service
-const BACKEND_URL = 'http://18.142.49.203:5000';
+import ApiService from './ApiService';
 
 /**
  * @typedef {Object} StatDefinition
@@ -17,15 +17,7 @@ class StatsService {
    */
   static async getAthleteStats(athleteId) {
     try {
-      const response = await fetch(`${BACKEND_URL}/athlete-stat-crud/${athleteId}`);
-      
-      if (response.ok) {
-        return await response.json();
-      } else if (response.status === 404) {
-        return null;
-      } else {
-        throw new Error(`Server responded with status ${response.status}`);
-      }
+      return await ApiService.get(`athlete-stat-crud/${athleteId}`);
     } catch (error) {
       console.error('Error fetching athlete stats:', error);
       throw error;
@@ -45,41 +37,41 @@ class StatsService {
       // Use specific endpoints for different stat types based on backend routes
       switch (statType) {
         case 'bmi':
-          endpoint = `${BACKEND_URL}/bmi/${athleteId}`;
+          endpoint = `bmi/${athleteId}`;
           break;
         case 'somatotype':
-          endpoint = `${BACKEND_URL}/somato/${athleteId}`;
+          endpoint = `somato/${athleteId}`;
           break;
         case 'vo2max':
-          endpoint = `${BACKEND_URL}/vo2max/${athleteId}`;
+          endpoint = `vo2max/${athleteId}`;
           break;
         case 'power_to_weight_ratio':
-          endpoint = `${BACKEND_URL}/ptw/${athleteId}`;
+          endpoint = `ptw/${athleteId}`;
           break;
         case 'speed_index':
-          endpoint = `${BACKEND_URL}/speed/${athleteId}`;
+          endpoint = `speed/${athleteId}`;
           break;
         case 'fatigue_index':
-          endpoint = `${BACKEND_URL}/sfi/${athleteId}`;
+          endpoint = `sfi/${athleteId}`;
           break;
         case 'grip_index':
-          endpoint = `${BACKEND_URL}/grip/${athleteId}`;
+          endpoint = `grip/${athleteId}`;
           break;
         case 'flexibility_index':
-          endpoint = `${BACKEND_URL}/flexibility/${athleteId}`;
+          endpoint = `flexibility/${athleteId}`;
           break;
         case 'jumping_index':
-          endpoint = `${BACKEND_URL}/jumpingpower/${athleteId}`;
+          endpoint = `jumpingpower/${athleteId}`;
           break;
         case 'neuromuscular_indexes':
-          endpoint = `${BACKEND_URL}/nme/${athleteId}`;
+          endpoint = `nme/${athleteId}`;
           break;
         case 'power_index':
-          endpoint = `${BACKEND_URL}/power/${athleteId}`;
+          endpoint = `power/${athleteId}`;
           break;
         default:
           // Fallback to generic endpoint
-          endpoint = `${BACKEND_URL}/athlete-stat-crud/generate`;
+          endpoint = `athlete-stat-crud/generate`;
           break;
       }
 
@@ -87,28 +79,15 @@ class StatsService {
 
       // Use PUT for specific endpoints and POST for the fallback
       const method = statType === 'generic' ? 'POST' : 'PUT';
-      const options = {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
-      // Add body for both PUT and POST requests
-      if (method === 'POST' || method === 'PUT') {
-        options.body = JSON.stringify({
-          athlete_id: athleteId,
-          stat_type: statType
-        });
+      const data = { athlete_id: athleteId, stat_type: statType };
+      
+      let result;
+      if (method === 'PUT') {
+        result = await ApiService.put(endpoint, data);
+      } else {
+        result = await ApiService.post(endpoint, data);
       }
 
-      const response = await fetch(endpoint, options);
-
-      if (!response.ok) {
-        throw new Error(`Failed to generate stat (${response.status})`);
-      }
-
-      const result = await response.json();
       console.log(`${statType} response:`, result);
       
       // Create a response object with the stat type as key

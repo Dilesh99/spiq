@@ -1,5 +1,5 @@
 // Performance measurement service
-const BACKEND_URL = 'http://18.142.49.203:5000';
+import ApiService from './ApiService';
 
 /**
  * @typedef {Object} PerformanceMeasurement
@@ -14,15 +14,7 @@ class PerformanceService {
   // Get all performance measurements for an athlete
   static async getPerformanceMeasurements(athleteId) {
     try {
-      const response = await fetch(`${BACKEND_URL}/basic-performance-crud/${athleteId}`);
-      
-      if (response.ok) {
-        return await response.json();
-      } else if (response.status === 404) {
-        return null;
-      } else {
-        throw new Error(`Server responded with status ${response.status}`);
-      }
+      return await ApiService.get(`basic-performance-crud/${athleteId}`);
     } catch (error) {
       console.error('Error fetching performance data:', error);
       throw error;
@@ -32,21 +24,11 @@ class PerformanceService {
   // Save performance measurements for an athlete
   static async savePerformanceMeasurements(data, isUpdate = false) {
     try {
-      const method = isUpdate ? 'PUT' : 'POST';
-      
-      const response = await fetch(`${BACKEND_URL}/basic-performance-crud`, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to save measurement (${response.status})`);
+      if (isUpdate) {
+        return await ApiService.put('basic-performance-crud', data);
+      } else {
+        return await ApiService.post('basic-performance-crud', data);
       }
-
-      return await response.json();
     } catch (error) {
       console.error('Error saving performance data:', error);
       throw error;

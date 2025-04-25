@@ -34,7 +34,7 @@ interface Measurements {
   skinfold_subscapular?: number; // mm
   skinfold_supraspinale?: number; // mm
   skinfold_medial_calf?: number; // mm
-  humerus_width?: number; // cm
+  humerous_width?: number; // cm
   femur_width?: number; // cm
 }
 
@@ -82,7 +82,7 @@ export default function AthleteMeasurementsScreen() {
     skinfold_subscapular: undefined,
     skinfold_supraspinale: undefined,
     skinfold_medial_calf: undefined,
-    humerus_width: undefined,
+    humerous_width: undefined,
     femur_width: undefined,
   });
 
@@ -131,7 +131,7 @@ export default function AthleteMeasurementsScreen() {
               skinfold_subscapular: data.skinfold_subscapular,
               skinfold_supraspinale: data.skinfold_supraspinale,
               skinfold_medial_calf: data.skinfold_medial_calf,
-              humerus_width: data.humerus_width,
+              humerous_width: data.humerous_width,
               femur_width: data.femur_width,
             });
           }
@@ -400,8 +400,8 @@ export default function AthleteMeasurementsScreen() {
         <TextInput
           style={styles.fullInput}
           keyboardType="numeric"
-          value={measurements.humerus_width?.toString() || ''}
-          onChangeText={(value) => handleInputChange('humerus_width', value)}
+          value={measurements.humerous_width?.toString() || ''}
+          onChangeText={(value) => handleInputChange('humerous_width', value)}
           placeholder="0.0"
         />
       </View>
