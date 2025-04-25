@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: height * 0.10,
+    
     backgroundColor: '#007bff',
     flexDirection: 'row',
     alignItems: 'center',
@@ -261,10 +262,12 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 16,
+    marginTop: height * 0.01,
   },
   headerTitle: {
     color: 'white',
     fontSize: width * 0.05,
+    marginTop: height * 0.01,
     fontWeight: 'bold',
   },
   content: {
