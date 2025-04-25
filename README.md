@@ -13,6 +13,7 @@ SportiQ is a mobile application designed to help Sri Lankan school athletes iden
 - [Guidelines for Stage 2](#guidelines-for-stage-2)
 - [Contribution](#contribution)
 
+
 ---
 
 ## 📖 Overview
