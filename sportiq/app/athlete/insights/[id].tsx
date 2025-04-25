@@ -83,6 +83,7 @@ export default function AthleteInsightsScreen() {
     'grip_index': 'grip_index',
     'neuromuscular_efficiency': 'neuromuscular_indexes',
     'flexibility_index': 'flexibility_index',
+    'dominant': 'somatotype'
   };
 
   // Get the stat definitions from the service
@@ -245,18 +246,9 @@ export default function AthleteInsightsScreen() {
           if (typeof result === 'number' || typeof result === 'string') {
             statValue = result;
           } 
-          // For somatotype which might return an object with the classification
-          else if (statId === 'somatotype' && 'classification' in result) {
-            statValue = result.classification;
-          }
-          
-          // Check for DB field mappings in the response
-          const dbField = Object.entries(dbFieldToStatMapping).find(
-            ([_, id]) => id === statId
-          )?.[0];
-          
-          if (dbField && typeof result === 'object' && dbField in result) {
-            statValue = (result as Record<string, any>)[dbField];
+          // For somatotype which might return an object with the dominant type
+          else if (statId === 'somatotype' && 'dominant' in result) {
+            statValue = result.dominant;
           }
         }
       }
@@ -342,9 +334,9 @@ export default function AthleteInsightsScreen() {
               if (typeof result === 'number' || typeof result === 'string') {
                 statValue = result;
               } 
-              // For somatotype which might return an object with the classification
-              else if (stat.id === 'somatotype' && 'classification' in result) {
-                statValue = result.classification;
+              // For somatotype which might return an object with the dominant type
+              else if (stat.id === 'somatotype' && 'dominant' in result) {
+                statValue = result.dominant;
               }
             }
           }
@@ -462,10 +454,8 @@ export default function AthleteInsightsScreen() {
           return parts.length > 0 ? parts.join(', ') : JSON.stringify(value);
           
         case 'somatotype':
-          if ('classification' in value) {
-            return value.classification;
-          } else if ('somatotype' in value) {
-            return value.somatotype;
+          if ('dominant' in value) {
+            return value.dominant;
           }
           break;
       }
