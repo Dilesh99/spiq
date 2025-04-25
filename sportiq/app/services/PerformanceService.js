@@ -144,7 +144,7 @@ class PerformanceService {
         name: 'Standing Long Jump', 
         key: 'standing_long_jump', 
         unit: 'cm',
-        icon: 'resize-horizontal',
+        icon: 'resize',
         description: 'Distance covered in a standing long jump'
       },
       { 
