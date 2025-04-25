@@ -7,26 +7,34 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
+
 export default function LoginScreen() {
+
+  const backend_url = "http://localhost:5000";
+
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [nic, setNIC] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+    if (!nic || !password) {
+      Alert.alert('Error', 'Please enter both nic and password');
       return;
     }
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://192.168.0.1:5000/auth/login', {
+      console.log(nic, password);
+      // Connect to the backend auth endpoint
+      const response = await fetch(`${backend_url}/auth/loginCoach`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nic, password }),
       });
-
+      console.log("here");
       const data = await response.json();
       if (response.ok) {
         console.log('Login successful:', data);
@@ -54,23 +62,24 @@ export default function LoginScreen() {
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
 
-        <View style={styles.header}>
-          <Text style={styles.title}>Login</Text>
-          <Text style={styles.subtitle}>Sign in to your SportIQ account</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.subtitle}>Sign in to your SportIQ account</Text>
+      </View>
+
+      <View style={styles.form}>
+        <View style={styles.inputContainer}>
+          <Ionicons name="card-outline" size={20} color="#777" style={styles.inputIcon} />
+          <TextInput
+            style={styles.input}
+            placeholder="NIC"
+            value={nic}
+            onChangeText={setNIC}
+            autoCapitalize="none"
+          />
         </View>
 
         <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Ionicons name="mail-outline" size={20} color="#777" style={styles.inputIcon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
 
           <View style={styles.inputContainer}>
             <Ionicons name="lock-closed-outline" size={20} color="#777" style={styles.inputIcon} />
@@ -108,6 +117,7 @@ export default function LoginScreen() {
           <TouchableOpacity onPress={() => router.push('/signup')}>
             <Text style={styles.signupText}>Sign Up</Text>
           </TouchableOpacity>
+        </View>
         </View>
       </KeyboardAvoidingView>
     </LinearGradient>

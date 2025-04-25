@@ -43,8 +43,6 @@ router.get('/:athlete_id', /*authenticateToken,*/ async (req, res) => {
 //Create an athlete
 router.post('/', async (req, res) => {
     try {
-        console.debug('Creating athlete');
-        console.debug(req.body);
         const { coach_nic, name, dob, sex, profile_pic } = req.body;
         const formattedDOB = new Date(dob);
         await pool.query(

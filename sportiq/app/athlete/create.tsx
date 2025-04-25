@@ -29,7 +29,7 @@ export default function CreateAthleteScreen() {
   const [isLoading, setIsLoading] = useState(false);
   
   // Hardcoded coach NIC for demo (in real app, this would come from authentication/context)
-  const coachNic = '123456789V';
+  const coachNic = '199934567890';
 
   const formatDate = (date: Date) => {
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
