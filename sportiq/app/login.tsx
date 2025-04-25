@@ -55,7 +55,11 @@ export default function LoginScreen() {
       
       if (data.successful) {
         await AsyncStorage.setItem('refreshToken', data.refreshToken);
+<<<<<<< Updated upstream
         await AsyncStorage.setItem('accessToken', data.accessToken);
+=======
+        await AsyncStorage.setItem('coachNIC', nic);
+>>>>>>> Stashed changes
         router.replace('/(tabs)');
       } else {
         Alert.alert('Login Failed', data.message || 'Invalid credentials');

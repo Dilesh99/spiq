@@ -53,6 +53,7 @@ export default function SignUpScreen() {
         await AsyncStorage.setItem('refreshToken', data2.refreshToken);
 
         if (data2.successful) {
+          AsyncStorage.setItem('coachNIC', nic);
           Alert.alert('Success', 'Account created successfully');
           router.replace('/(tabs)');
         } else {

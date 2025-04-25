@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, FlatList, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Real backend URL - adjust as needed
 const BACKEND_URL = 'http://18.142.49.203:5000';
@@ -24,6 +25,26 @@ export default function HomeScreen() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [coachNIC, setCoachNIC] = useState('');
+
+  const getCoachNIC = async () =>{
+    try {
+      const nic = await AsyncStorage.getItem('coachNIC');
+      if (nic !== null) {
+        setCoachNIC(nic);
+      }
+      else{
+        Alert.alert("Session expired.", "Please log in again");
+      }
+    }
+    catch(error){
+      Alert.alert("Error : " , `${error}`);
+    }
+  }
+
+  useEffect(()=>{
+    getCoachNIC();
+  }),[]
 
   useEffect(() => {
     setIsLoading(true);
