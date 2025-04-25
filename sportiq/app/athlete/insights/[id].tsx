@@ -14,6 +14,7 @@ import {
   RefreshControl,
   TouchableWithoutFeedback,
   Linking,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -70,6 +71,7 @@ export default function AthleteInsightsScreen() {
   const [recommendations, setRecommendations] = useState<SportRecommendation[]>([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [showSomatotypeInfo, setShowSomatotypeInfo] = useState(false);
 
   // DB field to stat mapping
   const dbFieldToStatMapping = {
@@ -128,9 +130,36 @@ export default function AthleteInsightsScreen() {
         const data = await response.json();
         console.log('Athlete stats data from DB:', data);
         
+        // For somatotype, fetch from specific endpoint
+        let somatotypeValue = null;
+        try {
+          const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+            method: 'GET'
+          });
+          if (somatoResponse.ok) {
+            const somatoData = await somatoResponse.json();
+            if (somatoData && 'dominant' in somatoData) {
+              somatotypeValue = somatoData;
+              console.log('Somatotype data fetched:', somatotypeValue);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching somatotype:', error);
+        }
+        
         if (data) {
           // Map DB fields to stat IDs
           const processedStats = statDefinitions.map(def => {
+            // Special case for somatotype
+            if (def.id === 'somatotype' && somatotypeValue) {
+              return {
+                id: def.id,
+                value: somatotypeValue,
+                unit: StatsService.getUnitForStat(def.id),
+                status: 'available' as const
+              };
+            }
+            
             // Find the DB field that corresponds to this stat
             const dbField = Object.entries(dbFieldToStatMapping).find(
               ([_, statId]) => statId === def.id
@@ -213,7 +242,17 @@ export default function AthleteInsightsScreen() {
     );
 
     try {
-      const result = await StatsService.generateStat(athleteId, statId);
+      let result;
+      // Special handling for somatotype
+      if (statId === 'somatotype') {
+        const response = await fetch(`${BACKEND_URL}/somato/${athleteId}`, {
+          method: 'PUT'
+        });
+        result = await response.json();
+      } else {
+        result = await StatsService.generateStat(athleteId, statId);
+      }
+      
       console.log(`Generated stat result for ${statId}:`, result);
       
       // Extract the value from the response
@@ -267,10 +306,38 @@ export default function AthleteInsightsScreen() {
         )
       );
 
-      // After successful generation, refresh the stats from the database
-      setTimeout(() => {
-        fetchAthleteStats();
-      }, 1000); // Small delay to ensure DB has updated
+      // After successful generation, fetch the newest data
+      if (statId === 'somatotype') {
+        // For somatotype, fetch from the specific endpoint to get the complete data
+        try {
+          const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+            method: 'GET'
+          });
+          if (somatoResponse.ok) {
+            const somatoData = await somatoResponse.json();
+            if (somatoData && 'dominant' in somatoData) {
+              // Update with the complete somatotype data
+              setStats(prevStats => 
+                prevStats.map(stat => 
+                  stat.id === 'somatotype' ? 
+                  { 
+                    ...stat, 
+                    value: somatoData,
+                    status: 'available' as const 
+                  } : stat
+                )
+              );
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching updated somatotype:', error);
+        }
+      } else {
+        // For other stats, refresh from database
+        setTimeout(() => {
+          fetchAthleteStats();
+        }, 1000); // Small delay to ensure DB has updated
+      }
 
       Alert.alert('Success', `${getStatDefinition(statId).name} generated successfully`);
     } catch (error) {
@@ -301,7 +368,17 @@ export default function AthleteInsightsScreen() {
         );
         
         try {
-          const result = await StatsService.generateStat(athleteId, stat.id);
+          let result;
+          // Special handling for somatotype
+          if (stat.id === 'somatotype') {
+            const response = await fetch(`${BACKEND_URL}/somato/${athleteId}`, {
+              method: 'PUT'
+            });
+            result = await response.json();
+          } else {
+            result = await StatsService.generateStat(athleteId, stat.id);
+          }
+          
           console.log(`Generated stat result for ${stat.id}:`, result);
           
           // Extract the value from the response
@@ -354,6 +431,33 @@ export default function AthleteInsightsScreen() {
               } : s
             )
           );
+          
+          // For somatotype, fetch the complete data
+          if (stat.id === 'somatotype') {
+            try {
+              const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+                method: 'GET'
+              });
+              if (somatoResponse.ok) {
+                const somatoData = await somatoResponse.json();
+                if (somatoData && 'dominant' in somatoData) {
+                  // Update with the complete somatotype data
+                  setStats(prevStats => 
+                    prevStats.map(s => 
+                      s.id === 'somatotype' ? 
+                      { 
+                        ...s, 
+                        value: somatoData,
+                        status: 'available' as const 
+                      } : s
+                    )
+                  );
+                }
+              }
+            } catch (error) {
+              console.error('Error fetching updated somatotype:', error);
+            }
+          }
         } catch (error) {
           console.error(`Error generating ${stat.id}:`, error);
           // Reset this stat's status
@@ -452,7 +556,7 @@ export default function AthleteInsightsScreen() {
           if ('nme_sprint' in value) parts.push(`Sprint: ${value.nme_sprint}`);
           
           return parts.length > 0 ? parts.join(', ') : JSON.stringify(value);
-          
+        
         case 'somatotype':
           if ('dominant' in value) {
             return value.dominant;
@@ -491,7 +595,7 @@ export default function AthleteInsightsScreen() {
       }
       
       // Last resort: convert to string but remove message and athlete_id properties
-      const { message, athlete_id, ...relevantData } = value;
+      const { message, athlete_id, ...relevantData } = value as any;
       if (Object.keys(relevantData).length > 0) {
         return JSON.stringify(relevantData);
       }
@@ -586,10 +690,21 @@ export default function AthleteInsightsScreen() {
         'power_index'
       ];
       
+      // Log all available stats for debugging
+      console.log("Current stats status:", stats.map(s => ({
+        id: s.id,
+        status: s.status,
+        hasValue: s.value !== null && s.value !== undefined
+      })));
+      
       // Find which required stats are missing
       const missingStats = requiredStats.filter(stat => {
         const statObj = stats.find(s => s.id === stat);
-        return !statObj || statObj.status !== 'available';
+        const isMissing = !statObj || statObj.status !== 'available';
+        if (isMissing) {
+          console.log(`Stat ${stat} is missing or not available. Status: ${statObj?.status}`);
+        }
+        return isMissing;
       });
       
       console.log("Missing stats:", missingStats);
@@ -633,11 +748,37 @@ export default function AthleteInsightsScreen() {
       const athleteStats = await response.json();
       console.log('Stats for recommendations:', athleteStats);
       
-      // Check for empty or null values in athlete stats from backend
+      // Merge in values from the local stats array that might not be in the backend yet
+      for (const stat of stats) {
+        if (stat.status === 'available' && stat.value) {
+          const statId = stat.id;
+          // If the stat isn't in the backend data or has a value of 0/null
+          const backendValue = extractStatValue(statId, athleteStats);
+          if (backendValue === 0 || backendValue === null || backendValue === undefined) {
+            console.log(`Using local value for ${statId} instead of backend value`);
+            
+            // For object values like somatotype, use the entire value
+            if (typeof stat.value === 'object') {
+              athleteStats[statId] = stat.value;
+            } 
+            // For primitive values or extractable values, try to get a numeric value
+            else {
+              const localValue = typeof stat.value === 'number' ? 
+                stat.value : 
+                (typeof stat.value === 'string' ? Number(stat.value) || 1 : 1);
+                
+              athleteStats[statId] = localValue;
+            }
+          }
+        }
+      }
+      
+      // Check for empty or null values in athlete stats from backend (after merging)
       const emptyBackendStats = [];
       
       for (const statId of requiredStats) {
         const statValue = extractStatValue(statId, athleteStats);
+        console.log(`Checking statId: ${statId}, value: ${statValue}`);
         if (statValue === 0 || statValue === null || statValue === undefined) {
           emptyBackendStats.push(statId);
         }
@@ -649,6 +790,8 @@ export default function AthleteInsightsScreen() {
           const definition = getStatDefinition(statId);
           return definition.name;
         });
+        
+        console.log("Empty stats after backend fetch:", emptyBackendStats);
         
         // Construct the message
         let message = 'Cannot generate recommendations. Missing data for: ';
@@ -711,121 +854,85 @@ export default function AthleteInsightsScreen() {
   
   // Algorithm to generate sport recommendations based on athlete stats
   const generateSportRecommendations = (athleteStats: any): SportRecommendation[] => {
-    // Define sports and their ideal stat profiles
+    // Define sports and their ideal stat profiles - limited to track and field events
     const sportProfiles = [
       {
-        name: 'Sprint Running',
+        name: '100m Sprint',
         idealStats: {
           speed_index: { weight: 5, min: 8, optimal: 10 },
-          power_index: { weight: 4, min: 6, optimal: 9 },
-          power_to_weight_ratio: { weight: 4, min: 4, optimal: 6 },
-          neuromuscular_indexes: { weight: 3, min: 70, optimal: 90 },
-          fatigue_index: { weight: 3, min: 60, optimal: 85 },
-          flexibility_index: { weight: 2, min: 30, optimal: 60 }
+          power_index: { weight: 4, min: 7, optimal: 10 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+          fatigue_index: { weight: 2, min: 60, optimal: 85 },
         },
-        icon: 'run'
+        icon: 'flash'
       },
       {
-        name: 'Swimming',
+        name: '200m Sprint',
         idealStats: {
-          vo2max: { weight: 5, min: 50, optimal: 65 },
-          power_index: { weight: 3, min: 5, optimal: 8 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
-          flexibility_index: { weight: 5, min: 60, optimal: 90 },
-          neuromuscular_indexes: { weight: 3, min: 60, optimal: 80 }
-        },
-        icon: 'water'
-      },
-      {
-        name: 'Basketball',
-        idealStats: {
-          jumping_index: { weight: 5, min: 60, optimal: 80 },
-          speed_index: { weight: 4, min: 7, optimal: 9 },
-          power_index: { weight: 3, min: 6, optimal: 8 },
-          neuromuscular_indexes: { weight: 4, min: 70, optimal: 85 },
-          fatigue_index: { weight: 3, min: 65, optimal: 80 }
-        },
-        icon: 'basketball'
-      },
-      {
-        name: 'Weightlifting',
-        idealStats: {
-          power_index: { weight: 5, min: 8, optimal: 10 },
-          grip_index: { weight: 4, min: 50, optimal: 70 },
-          power_to_weight_ratio: { weight: 3, min: 3.5, optimal: 5 },
-          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
-          bmi: { weight: 2, min: 25, optimal: 30 }
-        },
-        icon: 'barbell'
-      },
-      {
-        name: 'Long-Distance Running',
-        idealStats: {
-          vo2max: { weight: 5, min: 55, optimal: 70 },
-          fatigue_index: { weight: 5, min: 75, optimal: 95 },
-          bmi: { weight: 3, min: 18, optimal: 22 },
-          power_to_weight_ratio: { weight: 4, min: 3, optimal: 4.5 },
-          flexibility_index: { weight: 2, min: 40, optimal: 70 }
-        },
-        icon: 'walk'
-      },
-      {
-        name: 'Soccer/Football',
-        idealStats: {
-          speed_index: { weight: 4, min: 7, optimal: 9 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
-          vo2max: { weight: 4, min: 50, optimal: 65 },
-          power_index: { weight: 3, min: 6, optimal: 8 },
-          flexibility_index: { weight: 3, min: 50, optimal: 75 },
-          neuromuscular_indexes: { weight: 4, min: 65, optimal: 85 }
-        },
-        icon: 'football'
-      },
-      {
-        name: 'Gymnastics',
-        idealStats: {
-          flexibility_index: { weight: 5, min: 70, optimal: 95 },
-          power_to_weight_ratio: { weight: 5, min: 4, optimal: 6 },
-          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
-          grip_index: { weight: 3, min: 40, optimal: 60 },
-          bmi: { weight: 3, min: 18, optimal: 23 }
-        },
-        icon: 'body'
-      },
-      {
-        name: 'Cycling',
-        idealStats: {
-          vo2max: { weight: 5, min: 55, optimal: 75 },
-          power_to_weight_ratio: { weight: 5, min: 4, optimal: 7 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
+          speed_index: { weight: 5, min: 8, optimal: 10 },
           power_index: { weight: 4, min: 7, optimal: 9 },
-          neuromuscular_indexes: { weight: 3, min: 65, optimal: 85 }
+          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+          fatigue_index: { weight: 3, min: 65, optimal: 85 },
         },
-        icon: 'bicycle'
+        icon: 'flash'
       },
       {
-        name: 'Tennis',
+        name: '400m Sprint',
         idealStats: {
-          speed_index: { weight: 4, min: 6, optimal: 8 },
-          power_index: { weight: 3, min: 5, optimal: 8 },
-          neuromuscular_indexes: { weight: 4, min: 65, optimal: 85 },
-          fatigue_index: { weight: 3, min: 65, optimal: 85 },
-          flexibility_index: { weight: 4, min: 60, optimal: 80 },
-          grip_index: { weight: 4, min: 45, optimal: 65 }
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          fatigue_index: { weight: 5, min: 70, optimal: 90 },
+          neuromuscular_indexes: { weight: 4, min: 70, optimal: 90 },
+          power_to_weight_ratio: { weight: 3, min: 3.5, optimal: 5.5 },
+          vo2max: { weight: 3, min: 50, optimal: 65 },
         },
-        icon: 'tennisball'
+        icon: 'timer'
       },
       {
-        name: 'Martial Arts',
+        name: 'Hurdles',
         idealStats: {
-          flexibility_index: { weight: 5, min: 65, optimal: 90 },
-          neuromuscular_indexes: { weight: 5, min: 70, optimal: 90 },
-          power_index: { weight: 4, min: 6, optimal: 8 },
-          speed_index: { weight: 4, min: 6, optimal: 8 },
-          fatigue_index: { weight: 3, min: 65, optimal: 85 },
-          grip_index: { weight: 3, min: 40, optimal: 60 }
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          flexibility_index: { weight: 5, min: 70, optimal: 90 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          jumping_index: { weight: 4, min: 65, optimal: 85 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
         },
-        icon: 'fitness'
+        icon: 'podium'
+      },
+      {
+        name: 'Vertical Jump',
+        idealStats: {
+          jumping_index: { weight: 5, min: 70, optimal: 95 },
+          power_index: { weight: 4, min: 7, optimal: 10 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 4, min: 4.5, optimal: 7 },
+          flexibility_index: { weight: 2, min: 60, optimal: 80 },
+        },
+        icon: 'trending-up'
+      },
+      {
+        name: 'Long Jump',
+        idealStats: {
+          speed_index: { weight: 5, min: 7, optimal: 9 },
+          jumping_index: { weight: 5, min: 65, optimal: 90 },
+          power_index: { weight: 4, min: 7, optimal: 9 },
+          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+        },
+        icon: 'resize-horizontal'
+      },
+      {
+        name: 'Triple Jump',
+        idealStats: {
+          jumping_index: { weight: 5, min: 65, optimal: 90 },
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          power_index: { weight: 4, min: 7, optimal: 9 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          flexibility_index: { weight: 3, min: 65, optimal: 85 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+        },
+        icon: 'analytics'
       }
     ];
     
@@ -875,7 +982,7 @@ export default function AthleteInsightsScreen() {
       if (matchedStats === 0) {
         reason = 'Insufficient data to make accurate recommendation';
       } else if (sportSpecificReasons.length === 0) {
-        reason = 'Basic physical attributes match this sport';
+        reason = 'Basic physical attributes match this event';
       } else {
         // Take top 2 reasons
         reason = sportSpecificReasons.slice(0, 2).join('. ');
@@ -1104,6 +1211,137 @@ export default function AthleteInsightsScreen() {
     }
   };
 
+  // Render somatotype info modal
+  const renderSomatotypeInfoModal = () => {
+    const somatotypeInfo = [
+      {
+        name: 'Ectomorph',
+        description: 'Characterized by a lean and thin body with difficulty gaining weight. Ectomorphs typically have a light build, small joints, and thin muscles.',
+        traits: ['Fast metabolism', 'Long limbs', 'Difficulty gaining weight', 'Narrow shoulders and hips'],
+        advantages: ['Good endurance', 'Efficient cooling system', 'Excel at activities like running'],
+        color: '#3498db',
+        icon: 'body'
+      },
+      {
+        name: 'Mesomorph',
+        description: 'Characterized by a naturally athletic and solid body. Mesomorphs can gain muscle easily and tend to be strong and naturally athletic.',
+        traits: ['Athletic build', 'Efficient metabolism', 'Responds quickly to exercise', 'Rectangular shaped body'],
+        advantages: ['Natural strength', 'Balanced proportions', 'Excel at activities requiring power and agility'],
+        color: '#2ecc71',
+        icon: 'fitness'
+      },
+      {
+        name: 'Endomorph',
+        description: 'Characterized by a higher body fat, larger bone structure, and tendency to gain weight easily. Endomorphs typically have a soft and round body.',
+        traits: ['Slower metabolism', 'Strong lower body', 'Tendency to store fat', 'Wider hips and shoulders'],
+        advantages: ['Natural strength', 'Lower center of gravity', 'Excel at activities requiring stability and power'],
+        color: '#e74c3c',
+        icon: 'man'
+      }
+    ];
+
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showSomatotypeInfo}
+        onRequestClose={() => setShowSomatotypeInfo(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.somatotypeModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Body Types Explained</Text>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setShowSomatotypeInfo(false)}
+              >
+                <Ionicons name="close-circle" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView 
+              style={styles.somatotypeScrollView}
+              contentContainerStyle={styles.somatotypeScrollContent}
+              showsVerticalScrollIndicator={true}
+              bounces={true}
+              nestedScrollEnabled={true}
+            >
+              <View style={styles.somatotypeIntroContainer}>
+                <Text style={styles.somatotypeIntroText}>
+                  Somatotypes are body types that help categorize physical characteristics and 
+                  predispositions. While most people are a mix of types, understanding your 
+                  dominant type can help optimize training and nutrition.
+                </Text>
+              </View>
+              
+              <View style={styles.somatotypeIllustrationContainer}>
+                <Image 
+                  source={{uri: 'https://i.imgur.com/rElnIJM.png'}}
+                  style={styles.somatotypeIllustration}
+                  resizeMode="contain"
+                />
+              </View>
+              
+              {somatotypeInfo.map((type, index) => (
+                <View 
+                  key={index} 
+                  style={[
+                    styles.somatotypeCard, 
+                    {borderLeftColor: type.color}
+                  ]}
+                >
+                  <View style={styles.somatotypeCardHeader}>
+                    <View style={[styles.somatotypeIconContainer, {backgroundColor: type.color}]}>
+                      <Ionicons name={type.icon as any} size={28} color="white" />
+                    </View>
+                    <Text style={styles.somatotypeName}>{type.name}</Text>
+                  </View>
+                  
+                  <Text style={styles.somatotypeDescription}>
+                    {type.description}
+                  </Text>
+                  
+                  <View style={styles.somatotypeTraitsContainer}>
+                    <Text style={styles.somatotypeSubtitle}>Key Traits:</Text>
+                    {type.traits.map((trait, i) => (
+                      <View key={i} style={styles.traitItem}>
+                        <Ionicons name="checkmark-circle" size={16} color={type.color} />
+                        <Text style={styles.traitText}>{trait}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  
+                  <View style={styles.somatotypeAdvantagesContainer}>
+                    <Text style={styles.somatotypeSubtitle}>Athletic Advantages:</Text>
+                    {type.advantages.map((advantage, i) => (
+                      <View key={i} style={styles.traitItem}>
+                        <Ionicons name="star" size={16} color={type.color} />
+                        <Text style={styles.traitText}>{advantage}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+              
+              <View style={styles.somatotypeFooter}>
+                <Text style={styles.somatotypeFooterText}>
+                  Most people have a combination of these three somatotypes. Your dominant somatotype can provide valuable insights into the types of sports that may align best with your body type. Our app helps guide you in selecting the sport that complements your body type, allowing you to make informed decisions about your athletic pursuits.
+                </Text>
+              </View>
+            </ScrollView>
+            
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setShowSomatotypeInfo(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -1228,23 +1466,44 @@ export default function AthleteInsightsScreen() {
         <View style={styles.statsContainer}>
           {stats.map((stat) => {
             const definition = getStatDefinition(stat.id);
+            const isSomatotype = stat.id === 'somatotype';
+            
             return (
-              <View key={stat.id} style={styles.statCard}>
+              <TouchableOpacity 
+                key={stat.id} 
+                style={styles.statCard}
+                onPress={() => {
+                  // Only open the somatotype modal if it's a somatotype stat and it's available
+                  if (isSomatotype && stat.status === 'available') {
+                    setShowSomatotypeInfo(true);
+                  }
+                }}
+                activeOpacity={isSomatotype && stat.status === 'available' ? 0.7 : 1}
+              >
                 <View style={styles.statHeader}>
                   <View style={styles.statTitleContainer}>
                     <Ionicons name={definition.icon as any} size={24} color="#007bff" />
                     <Text style={styles.statName}>{definition.name}</Text>
+                    {isSomatotype && stat.status === 'available' && (
+                      <Ionicons name="chevron-forward" size={16} color="#007bff" style={styles.infoArrow} />
+                    )}
                   </View>
                   {renderStatusIcon(stat.status)}
                 </View>
                 
                 <Text style={styles.statDescription}>
                   {definition.description}
+                  {isSomatotype && stat.status === 'available' && (
+                    <Text style={styles.tapForMoreText}> (tap for more info)</Text>
+                  )}
                 </Text>
                 
                 <View style={styles.statValueContainer}>
                   {stat.status === 'available' ? (
-                    <View style={styles.statValueWrapper}>
+                    <View style={[
+                      styles.statValueWrapper,
+                      isSomatotype ? styles.somatotypeValueWrapper : null
+                    ]}>
                       <Text style={styles.statValue}>
                         {formatStatValue(stat)}
                       </Text>
@@ -1266,7 +1525,7 @@ export default function AthleteInsightsScreen() {
                     </TouchableOpacity>
                   )}
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -1274,6 +1533,9 @@ export default function AthleteInsightsScreen() {
 
       {/* Render the recommendations modal */}
       {renderRecommendationsModal()}
+
+      {/* Render somatotype info modal */}
+      {renderSomatotypeInfoModal()}
     </SafeAreaView>
   );
 }
@@ -1630,5 +1892,140 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
+  },
+  somatotypeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  somatotypeValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  somatotypeInfoButton: {
+    padding: 5,
+    marginLeft: 6,
+  },
+  somatotypeModalContent: {
+    width: '90%',
+    height: '80%',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flexDirection: 'column',
+  },
+  somatotypeScrollView: {
+    flex: 1,
+    marginBottom: 15,
+  },
+  somatotypeScrollContent: {
+    paddingBottom: 10,
+  },
+  somatotypeIntroContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 20,
+  },
+  somatotypeIntroText: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+  },
+  somatotypeIllustrationContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  somatotypeIllustration: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+  },
+  somatotypeCard: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 15,
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  somatotypeCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  somatotypeIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  somatotypeName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  somatotypeDescription: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+    marginBottom: 15,
+  },
+  somatotypeTraitsContainer: {
+    marginBottom: 15,
+  },
+  somatotypeAdvantagesContainer: {
+    marginBottom: 10,
+  },
+  somatotypeSubtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
+  },
+  traitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  traitText: {
+    fontSize: 14,
+    color: '#555',
+    marginLeft: 8,
+  },
+  somatotypeFooter: {
+    backgroundColor: '#eaf6ff',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 5,
+    marginBottom: 15,
+  },
+  somatotypeFooterText: {
+    fontSize: 14,
+    color: '#555',
+    lineHeight: 22,
+  },
+  somatotypeValueWrapper: {
+    borderLeftWidth: 3,
+    borderLeftColor: '#007bff',
+  },
+  infoArrow: {
+    marginLeft: 5,
+  },
+  tapForMoreText: {
+    color: '#007bff',
+    fontStyle: 'italic', 
+    fontSize: 12,
   },
 }); 

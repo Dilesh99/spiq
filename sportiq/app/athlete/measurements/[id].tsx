@@ -37,7 +37,7 @@ interface Measurements {
 
 // Define measurement instruction sources
 const measurementInstructions = {
-  uac: 'https://www.researchgate.net/profile/Donald-Dengel/publication/348566999/figure/fig2/AS:982778328346626@1611551010566/Mid-Upper-Arm-Circumference-Examiner-Standing-Behind-the-Subject-With-the-Subject-s.png',
+  uac: require('../../../assets/images/arm.png'),
   cc: 'https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2023/02/calf-muscle-measurement.png?resize=768%2C432&ssl=1',
   triceps: 'https://www.researchgate.net/profile/Thomas-Barber-3/publication/9087613/figure/fig2/AS:394662550278146@1471104300584/Measurement-of-skinfold-thickness-at-the-triceps-site-All-skinfold-thicknesses-were.png',
   subscapular: 'https://www.researchgate.net/profile/Donald-Dengel/publication/348566999/figure/fig6/AS:982778336735233@1611551011143/Subscapular-Skinfold-Thickness-This-Skinfold-is-Measured-on-the-Diagonal-Line-Coming.png',
@@ -255,7 +255,7 @@ export default function AthleteMeasurementsScreen() {
       <View style={styles.measurementContainer}>
         <Text style={styles.label}>Upper Arm Circumference (cm)</Text>
         <Image 
-          source={{ uri: measurementInstructions.uac }}
+          source={typeof measurementInstructions.uac === 'string' ? { uri: measurementInstructions.uac } : measurementInstructions.uac}
           style={styles.instructionImage}
           resizeMode="contain"
         />

@@ -161,8 +161,11 @@ export default function AthleteRecommendationsScreen() {
             // Store selected sport in a global var
             global.SELECTED_SPORT = sport.name;
             
-            // Navigate to performance measurements page
-            router.push(`/athlete/performance-measurements/${athleteId}`);
+            // Navigate to the new tracking interface instead of performance measurements
+            router.push({
+              pathname: "/athlete/tracking/[id]",
+              params: { id: athleteId }
+            });
           }
         }
       ]
