@@ -232,10 +232,7 @@ export default function AthleteDetailsScreen() {
             <Text style={styles.performanceButtonText}>Performance Measurements</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.historyButton} onPress={handlePerformanceHistory}>
-            <Ionicons name="trending-up" size={20} color="#28a745" style={styles.buttonIcon} />
-            <Text style={styles.historyButtonText}>View Performance History</Text>
-          </TouchableOpacity>
+          
           
           <TouchableOpacity style={styles.insightsButton} onPress={handleInsights}>
             <Ionicons name="analytics" size={20} color="#6f42c1" style={styles.buttonIcon} />
