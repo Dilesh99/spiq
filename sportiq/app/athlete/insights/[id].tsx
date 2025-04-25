@@ -854,121 +854,85 @@ export default function AthleteInsightsScreen() {
   
   // Algorithm to generate sport recommendations based on athlete stats
   const generateSportRecommendations = (athleteStats: any): SportRecommendation[] => {
-    // Define sports and their ideal stat profiles
+    // Define sports and their ideal stat profiles - limited to track and field events
     const sportProfiles = [
       {
-        name: 'Sprint Running',
+        name: '100m Sprint',
         idealStats: {
           speed_index: { weight: 5, min: 8, optimal: 10 },
-          power_index: { weight: 4, min: 6, optimal: 9 },
-          power_to_weight_ratio: { weight: 4, min: 4, optimal: 6 },
-          neuromuscular_indexes: { weight: 3, min: 70, optimal: 90 },
-          fatigue_index: { weight: 3, min: 60, optimal: 85 },
-          flexibility_index: { weight: 2, min: 30, optimal: 60 }
+          power_index: { weight: 4, min: 7, optimal: 10 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+          fatigue_index: { weight: 2, min: 60, optimal: 85 },
         },
-        icon: 'run'
+        icon: 'flash'
       },
       {
-        name: 'Swimming',
+        name: '200m Sprint',
         idealStats: {
-          vo2max: { weight: 5, min: 50, optimal: 65 },
-          power_index: { weight: 3, min: 5, optimal: 8 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
-          flexibility_index: { weight: 5, min: 60, optimal: 90 },
-          neuromuscular_indexes: { weight: 3, min: 60, optimal: 80 }
-        },
-        icon: 'water'
-      },
-      {
-        name: 'Basketball',
-        idealStats: {
-          jumping_index: { weight: 5, min: 60, optimal: 80 },
-          speed_index: { weight: 4, min: 7, optimal: 9 },
-          power_index: { weight: 3, min: 6, optimal: 8 },
-          neuromuscular_indexes: { weight: 4, min: 70, optimal: 85 },
-          fatigue_index: { weight: 3, min: 65, optimal: 80 }
-        },
-        icon: 'basketball'
-      },
-      {
-        name: 'Weightlifting',
-        idealStats: {
-          power_index: { weight: 5, min: 8, optimal: 10 },
-          grip_index: { weight: 4, min: 50, optimal: 70 },
-          power_to_weight_ratio: { weight: 3, min: 3.5, optimal: 5 },
-          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
-          bmi: { weight: 2, min: 25, optimal: 30 }
-        },
-        icon: 'barbell'
-      },
-      {
-        name: 'Long-Distance Running',
-        idealStats: {
-          vo2max: { weight: 5, min: 55, optimal: 70 },
-          fatigue_index: { weight: 5, min: 75, optimal: 95 },
-          bmi: { weight: 3, min: 18, optimal: 22 },
-          power_to_weight_ratio: { weight: 4, min: 3, optimal: 4.5 },
-          flexibility_index: { weight: 2, min: 40, optimal: 70 }
-        },
-        icon: 'walk'
-      },
-      {
-        name: 'Soccer/Football',
-        idealStats: {
-          speed_index: { weight: 4, min: 7, optimal: 9 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
-          vo2max: { weight: 4, min: 50, optimal: 65 },
-          power_index: { weight: 3, min: 6, optimal: 8 },
-          flexibility_index: { weight: 3, min: 50, optimal: 75 },
-          neuromuscular_indexes: { weight: 4, min: 65, optimal: 85 }
-        },
-        icon: 'football'
-      },
-      {
-        name: 'Gymnastics',
-        idealStats: {
-          flexibility_index: { weight: 5, min: 70, optimal: 95 },
-          power_to_weight_ratio: { weight: 5, min: 4, optimal: 6 },
-          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
-          grip_index: { weight: 3, min: 40, optimal: 60 },
-          bmi: { weight: 3, min: 18, optimal: 23 }
-        },
-        icon: 'body'
-      },
-      {
-        name: 'Cycling',
-        idealStats: {
-          vo2max: { weight: 5, min: 55, optimal: 75 },
-          power_to_weight_ratio: { weight: 5, min: 4, optimal: 7 },
-          fatigue_index: { weight: 4, min: 70, optimal: 90 },
+          speed_index: { weight: 5, min: 8, optimal: 10 },
           power_index: { weight: 4, min: 7, optimal: 9 },
-          neuromuscular_indexes: { weight: 3, min: 65, optimal: 85 }
+          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+          fatigue_index: { weight: 3, min: 65, optimal: 85 },
         },
-        icon: 'bicycle'
+        icon: 'flash'
       },
       {
-        name: 'Tennis',
+        name: '400m Sprint',
         idealStats: {
-          speed_index: { weight: 4, min: 6, optimal: 8 },
-          power_index: { weight: 3, min: 5, optimal: 8 },
-          neuromuscular_indexes: { weight: 4, min: 65, optimal: 85 },
-          fatigue_index: { weight: 3, min: 65, optimal: 85 },
-          flexibility_index: { weight: 4, min: 60, optimal: 80 },
-          grip_index: { weight: 4, min: 45, optimal: 65 }
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          fatigue_index: { weight: 5, min: 70, optimal: 90 },
+          neuromuscular_indexes: { weight: 4, min: 70, optimal: 90 },
+          power_to_weight_ratio: { weight: 3, min: 3.5, optimal: 5.5 },
+          vo2max: { weight: 3, min: 50, optimal: 65 },
         },
-        icon: 'tennisball'
+        icon: 'timer'
       },
       {
-        name: 'Martial Arts',
+        name: 'Hurdles',
         idealStats: {
-          flexibility_index: { weight: 5, min: 65, optimal: 90 },
-          neuromuscular_indexes: { weight: 5, min: 70, optimal: 90 },
-          power_index: { weight: 4, min: 6, optimal: 8 },
-          speed_index: { weight: 4, min: 6, optimal: 8 },
-          fatigue_index: { weight: 3, min: 65, optimal: 85 },
-          grip_index: { weight: 3, min: 40, optimal: 60 }
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          flexibility_index: { weight: 5, min: 70, optimal: 90 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          jumping_index: { weight: 4, min: 65, optimal: 85 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
         },
-        icon: 'fitness'
+        icon: 'podium'
+      },
+      {
+        name: 'Vertical Jump',
+        idealStats: {
+          jumping_index: { weight: 5, min: 70, optimal: 95 },
+          power_index: { weight: 4, min: 7, optimal: 10 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 4, min: 4.5, optimal: 7 },
+          flexibility_index: { weight: 2, min: 60, optimal: 80 },
+        },
+        icon: 'trending-up'
+      },
+      {
+        name: 'Long Jump',
+        idealStats: {
+          speed_index: { weight: 5, min: 7, optimal: 9 },
+          jumping_index: { weight: 5, min: 65, optimal: 90 },
+          power_index: { weight: 4, min: 7, optimal: 9 },
+          neuromuscular_indexes: { weight: 4, min: 75, optimal: 95 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+        },
+        icon: 'resize-horizontal'
+      },
+      {
+        name: 'Triple Jump',
+        idealStats: {
+          jumping_index: { weight: 5, min: 65, optimal: 90 },
+          speed_index: { weight: 4, min: 7, optimal: 9 },
+          power_index: { weight: 4, min: 7, optimal: 9 },
+          neuromuscular_indexes: { weight: 5, min: 75, optimal: 95 },
+          flexibility_index: { weight: 3, min: 65, optimal: 85 },
+          power_to_weight_ratio: { weight: 3, min: 4, optimal: 6 },
+        },
+        icon: 'analytics'
       }
     ];
     
@@ -1018,7 +982,7 @@ export default function AthleteInsightsScreen() {
       if (matchedStats === 0) {
         reason = 'Insufficient data to make accurate recommendation';
       } else if (sportSpecificReasons.length === 0) {
-        reason = 'Basic physical attributes match this sport';
+        reason = 'Basic physical attributes match this event';
       } else {
         // Take top 2 reasons
         reason = sportSpecificReasons.slice(0, 2).join('. ');
