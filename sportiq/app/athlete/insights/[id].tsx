@@ -128,9 +128,36 @@ export default function AthleteInsightsScreen() {
         const data = await response.json();
         console.log('Athlete stats data from DB:', data);
         
+        // For somatotype, fetch from specific endpoint
+        let somatotypeValue = null;
+        try {
+          const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+            method: 'GET'
+          });
+          if (somatoResponse.ok) {
+            const somatoData = await somatoResponse.json();
+            if (somatoData && 'dominant' in somatoData) {
+              somatotypeValue = somatoData;
+              console.log('Somatotype data fetched:', somatotypeValue);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching somatotype:', error);
+        }
+        
         if (data) {
           // Map DB fields to stat IDs
           const processedStats = statDefinitions.map(def => {
+            // Special case for somatotype
+            if (def.id === 'somatotype' && somatotypeValue) {
+              return {
+                id: def.id,
+                value: somatotypeValue,
+                unit: StatsService.getUnitForStat(def.id),
+                status: 'available' as const
+              };
+            }
+            
             // Find the DB field that corresponds to this stat
             const dbField = Object.entries(dbFieldToStatMapping).find(
               ([_, statId]) => statId === def.id
@@ -213,7 +240,17 @@ export default function AthleteInsightsScreen() {
     );
 
     try {
-      const result = await StatsService.generateStat(athleteId, statId);
+      let result;
+      // Special handling for somatotype
+      if (statId === 'somatotype') {
+        const response = await fetch(`${BACKEND_URL}/somato/${athleteId}`, {
+          method: 'PUT'
+        });
+        result = await response.json();
+      } else {
+        result = await StatsService.generateStat(athleteId, statId);
+      }
+      
       console.log(`Generated stat result for ${statId}:`, result);
       
       // Extract the value from the response
@@ -267,10 +304,38 @@ export default function AthleteInsightsScreen() {
         )
       );
 
-      // After successful generation, refresh the stats from the database
-      setTimeout(() => {
-        fetchAthleteStats();
-      }, 1000); // Small delay to ensure DB has updated
+      // After successful generation, fetch the newest data
+      if (statId === 'somatotype') {
+        // For somatotype, fetch from the specific endpoint to get the complete data
+        try {
+          const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+            method: 'GET'
+          });
+          if (somatoResponse.ok) {
+            const somatoData = await somatoResponse.json();
+            if (somatoData && 'dominant' in somatoData) {
+              // Update with the complete somatotype data
+              setStats(prevStats => 
+                prevStats.map(stat => 
+                  stat.id === 'somatotype' ? 
+                  { 
+                    ...stat, 
+                    value: somatoData,
+                    status: 'available' as const 
+                  } : stat
+                )
+              );
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching updated somatotype:', error);
+        }
+      } else {
+        // For other stats, refresh from database
+        setTimeout(() => {
+          fetchAthleteStats();
+        }, 1000); // Small delay to ensure DB has updated
+      }
 
       Alert.alert('Success', `${getStatDefinition(statId).name} generated successfully`);
     } catch (error) {
@@ -301,7 +366,17 @@ export default function AthleteInsightsScreen() {
         );
         
         try {
-          const result = await StatsService.generateStat(athleteId, stat.id);
+          let result;
+          // Special handling for somatotype
+          if (stat.id === 'somatotype') {
+            const response = await fetch(`${BACKEND_URL}/somato/${athleteId}`, {
+              method: 'PUT'
+            });
+            result = await response.json();
+          } else {
+            result = await StatsService.generateStat(athleteId, stat.id);
+          }
+          
           console.log(`Generated stat result for ${stat.id}:`, result);
           
           // Extract the value from the response
@@ -354,6 +429,33 @@ export default function AthleteInsightsScreen() {
               } : s
             )
           );
+          
+          // For somatotype, fetch the complete data
+          if (stat.id === 'somatotype') {
+            try {
+              const somatoResponse = await fetch(`${BACKEND_URL}/athlete-somato/${athleteId}`, {
+                method: 'GET'
+              });
+              if (somatoResponse.ok) {
+                const somatoData = await somatoResponse.json();
+                if (somatoData && 'dominant' in somatoData) {
+                  // Update with the complete somatotype data
+                  setStats(prevStats => 
+                    prevStats.map(s => 
+                      s.id === 'somatotype' ? 
+                      { 
+                        ...s, 
+                        value: somatoData,
+                        status: 'available' as const 
+                      } : s
+                    )
+                  );
+                }
+              }
+            } catch (error) {
+              console.error('Error fetching updated somatotype:', error);
+            }
+          }
         } catch (error) {
           console.error(`Error generating ${stat.id}:`, error);
           // Reset this stat's status
