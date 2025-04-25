@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 // @ts-ignore
 // import DateTimePicker from '@react-native-community/datetimepicker';
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'http://18.142.49.203:5000';
 
 export default function CreateAthleteScreen() {
   const router = useRouter();

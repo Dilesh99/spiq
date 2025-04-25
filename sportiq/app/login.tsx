@@ -10,7 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LoginScreen() {
 
-  const backend_url = "http://localhost:5000";
+  const backend_url = "http://18.142.49.203:5000";
 
   const router = useRouter();
   const [nic, setNIC] = useState('');

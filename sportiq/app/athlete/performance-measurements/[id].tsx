@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import PerformanceService from '../../services/PerformanceService';
 
 // Use IP address instead of localhost for mobile compatibility
-const BACKEND_URL = 'http://localhost:5000';  // Replace with your computer's actual local IP address
+const BACKEND_URL = 'http://18.142.49.203:5000';  // Replace with your computer's actual local IP address
 
 // Performance Measurement Interface
 interface PerformanceMeasurement {

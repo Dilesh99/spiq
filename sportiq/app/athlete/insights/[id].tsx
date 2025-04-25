@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import StatsService from '../../services/StatsService';
 
 // Use IP address instead of localhost for mobile compatibility
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = 'http://18.142.49.203:5000';
 
 // Stat data interface
 interface StatData {
