@@ -556,20 +556,10 @@ export default function AthleteInsightsScreen() {
           if ('nme_sprint' in value) parts.push(`Sprint: ${value.nme_sprint}`);
           
           return parts.length > 0 ? parts.join(', ') : JSON.stringify(value);
-          
+        
         case 'somatotype':
           if ('dominant' in value) {
-            return (
-              <View style={styles.somatotypeContainer}>
-                <Text style={styles.somatotypeValue}>{value.dominant}</Text>
-                <TouchableOpacity 
-                  style={styles.somatotypeInfoButton}
-                  onPress={() => setShowSomatotypeInfo(true)}
-                >
-                  <Ionicons name="information-circle" size={20} color="#007bff" />
-                </TouchableOpacity>
-              </View>
-            );
+            return value.dominant;
           }
           break;
       }
@@ -605,7 +595,7 @@ export default function AthleteInsightsScreen() {
       }
       
       // Last resort: convert to string but remove message and athlete_id properties
-      const { message, athlete_id, ...relevantData } = value;
+      const { message, athlete_id, ...relevantData } = value as any;
       if (Object.keys(relevantData).length > 0) {
         return JSON.stringify(relevantData);
       }
@@ -1473,23 +1463,44 @@ export default function AthleteInsightsScreen() {
         <View style={styles.statsContainer}>
           {stats.map((stat) => {
             const definition = getStatDefinition(stat.id);
+            const isSomatotype = stat.id === 'somatotype';
+            
             return (
-              <View key={stat.id} style={styles.statCard}>
+              <TouchableOpacity 
+                key={stat.id} 
+                style={styles.statCard}
+                onPress={() => {
+                  // Only open the somatotype modal if it's a somatotype stat and it's available
+                  if (isSomatotype && stat.status === 'available') {
+                    setShowSomatotypeInfo(true);
+                  }
+                }}
+                activeOpacity={isSomatotype && stat.status === 'available' ? 0.7 : 1}
+              >
                 <View style={styles.statHeader}>
                   <View style={styles.statTitleContainer}>
                     <Ionicons name={definition.icon as any} size={24} color="#007bff" />
                     <Text style={styles.statName}>{definition.name}</Text>
+                    {isSomatotype && stat.status === 'available' && (
+                      <Ionicons name="chevron-forward" size={16} color="#007bff" style={styles.infoArrow} />
+                    )}
                   </View>
                   {renderStatusIcon(stat.status)}
                 </View>
                 
                 <Text style={styles.statDescription}>
                   {definition.description}
+                  {isSomatotype && stat.status === 'available' && (
+                    <Text style={styles.tapForMoreText}> (tap for more info)</Text>
+                  )}
                 </Text>
                 
                 <View style={styles.statValueContainer}>
                   {stat.status === 'available' ? (
-                    <View style={styles.statValueWrapper}>
+                    <View style={[
+                      styles.statValueWrapper,
+                      isSomatotype ? styles.somatotypeValueWrapper : null
+                    ]}>
                       <Text style={styles.statValue}>
                         {formatStatValue(stat)}
                       </Text>
@@ -1511,7 +1522,7 @@ export default function AthleteInsightsScreen() {
                     </TouchableOpacity>
                   )}
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
@@ -1996,5 +2007,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     lineHeight: 22,
+  },
+  somatotypeValueWrapper: {
+    borderLeftWidth: 3,
+    borderLeftColor: '#007bff',
+  },
+  infoArrow: {
+    marginLeft: 5,
+  },
+  tapForMoreText: {
+    color: '#007bff',
+    fontStyle: 'italic', 
+    fontSize: 12,
   },
 }); 
